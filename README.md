@@ -141,6 +141,105 @@ To generate a unique UTMVC submit path with a random query parameter, use the `G
 submitPath := incapsula.GetUtmvcSubmitPath()
 ```
 
+## Kasada
+
+The Kasada package provides functions for interacting with Kasada Bot Manager, including parsing script path.
+
+### Generating Payload Data (CT)
+
+To generate payload data required for generating valid `x-kpsdk-ct` tokens, use the `GenerateKasadaPayload` function:
+
+```go
+payload, headers, err := session.GenerateKasadaPayload(ctx, &hyper.KasadaPayloadInput{
+// Set the required input fields
+})
+if err != nil {
+// Handle the error
+}
+```
+
+### Generating Pow Data (CD)
+
+To generate POW data (`x-kpsdk-cd`) tokens, use the `GenerateKasadaPow` function:
+
+```go
+payload, err := session.GenerateKasadaPow(ctx, &hyper.KasadaPowInput{
+    // Set the required input fields
+})
+if err != nil {
+    // Handle the error
+}
+```
+
+### Parsing Script Path
+
+To parse the Kasada script path from the given blocked page (status code 429) HTML code, use the `ParseScriptPath` function:
+
+```go
+scriptPath, err := kasada.ParseScriptPath(reader)
+if err != nil {
+    // Handle the error
+}
+// will look like: /ips.js?...
+```
+
+## DataDome
+
+The DataDome package provides functions for interacting with DataDome Bot Manager, including parsing device link URLs
+for interstitial and slider.
+
+### Generating Interstitial Payload
+
+To generate payload data required for solving interstitial, use the `GenerateDataDomeInterstitial` function:
+
+```go
+payload, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
+// Set the required input fields
+})
+if err != nil {
+// Handle the error
+}
+// Use the payload to POST to https://geo.captcha-delivery.com/interstitial/
+```
+
+### Generating Slider Payload
+
+To solve DataDome Slider, use the `GenerateDataDomeSlider` function:
+
+```go
+checkUrl, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
+    // Set the required input fields
+})
+if err != nil {
+    // Handle the error
+}
+// Create a GET request to the checkUrl
+```
+
+### Parsing Interstitial DeviceLink URL
+
+To parse the Interstitial DeviceLink URL from the HTML code, use the `ParseInterstitialDeviceCheckLink` function:
+
+```go
+deviceLink, err := datadome.ParseInterstitialDeviceCheckLink(reader, datadomeCookie, referer)
+if err != nil {
+// Handle the error
+}
+// deviceLink will look like: https://geo.captcha-delivery.com/interstitial/?...
+```
+
+### Parsing Slider DeviceLink URL
+
+To parse the Slider DeviceLink URL from the HTML code, use the `ParseSliderDeviceCheckLink` function:
+
+```go
+deviceLink, err := datadome.ParseSliderDeviceCheckLink(reader, datadomeCookie, referer)
+if err != nil {
+    // Handle the error
+}
+// deviceLink will look like: https://geo.captcha-delivery.com/captcha/?...
+```
+
 ## Contributing
 
 If you find any issues or have suggestions for improvement, please open an issue or submit a pull request.

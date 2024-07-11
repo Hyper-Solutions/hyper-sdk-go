@@ -81,3 +81,37 @@ type KasadaHeaders struct {
 	XKpsdkFc string `json:"x-kpsdk-fc"`
 	XKpsdkIm string `json:"x-kpsdk-im"`
 }
+
+type DataDomeSliderInput struct {
+	// UserAgent must be a Chrome Windows User-Agent.
+	UserAgent string `json:"userAgent"`
+
+	// DeviceLink is the URL that contains the script and starts like this:
+	// https://geo.captcha-delivery.com/captcha/?initialCid
+	DeviceLink string `json:"deviceLink"`
+
+	// Html is the response body of the GET request to the DeviceLink
+	Html string `json:"html"`
+
+	// Puzzle is the captcha puzzle image bytes, base64 encoded.
+	// The URL that returns the puzzle looks like this:
+	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.jpg
+	Puzzle string `json:"puzzle"`
+
+	// Piece is the captcha puzzle piece image bytes, base64 encoded.
+	// The URL that returns the puzzle looks like this:
+	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
+	Piece string `json:"piece"`
+}
+
+type DataDomeInterstitialInput struct {
+	// UserAgent must be a Chrome Windows User-Agent.
+	UserAgent string `json:"userAgent"`
+
+	// DeviceLink is the URL that contains the script and starts like this:
+	// https://geo.captcha-delivery.com/captcha/?initialCid
+	DeviceLink string `json:"deviceLink"`
+
+	// Html is the response body of the GET request to the DeviceLink
+	Html string `json:"html"`
+}
