@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -24,5 +25,8 @@ func ParseScriptPath(reader io.Reader) (string, error) {
 		return "", ErrScriptPathNotFound
 	}
 
-	return string(matches[1]), nil
+	blockLink := string(matches[1])
+	blockLink = strings.ReplaceAll(blockLink, "&amp;", "&")
+
+	return blockLink, nil
 }
