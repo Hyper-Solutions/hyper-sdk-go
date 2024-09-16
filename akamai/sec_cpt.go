@@ -293,7 +293,7 @@ func (s *SecCptChallenge) SleepWithContext(ctx context.Context) {
 }
 
 func generateSecCptAnswers(sec string, challengeData *secCptChallengeData) []string {
-	answers := make([]string, 10)
+	answers := make([]string, challengeData.Count)
 	challenge := sec + strconv.Itoa(challengeData.Timestamp) + challengeData.Nonce
 	hash := sha256.New()
 	var hashBytes [sha256.Size]byte
