@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"github.com/mailru/easyjson"
 	"io"
@@ -22,7 +21,7 @@ import (
 var (
 	secDurationExpr  = regexp.MustCompile(`data-duration=(\d+)`)
 	secChallengeExpr = regexp.MustCompile(`challenge="(.*?)"`)
-	secPageExpr      = regexp.MustCompile(`src="(/_sec/cp_challenge/ak-challenge-\d+-\d+.htm)"`)
+	secPageExpr      = regexp.MustCompile(`data-duration=\d+\s+src="([^"]+)"`)
 
 	ErrSecCptParsing       = errors.New("hyper-sdk: error parsing sec-cpt")
 	ErrSecCptInvalidCookie = errors.New("hyper-sdk: malformed sec_cpt cookie")
@@ -35,12 +34,16 @@ type SecCptChallenge struct {
 	challengeData *secCptChallengeData
 }
 
+//easyjson:json
 type secCptChallengeData struct {
 	Token      string `json:"token"`
 	Timestamp  int    `json:"timestamp"`
 	Nonce      string `json:"nonce"`
 	Difficulty int    `json:"difficulty"`
+	Count      int    `json:"count"`
 	Timeout    int    `json:"timeout"`
+	CPU        bool   `json:"cpu"`
+	VerifyURL  string `json:"verify_url"`
 }
 
 //easyjson:json
@@ -163,7 +166,7 @@ func parseSecCptChallengeData(src []byte) (*secCptChallengeData, error) {
 	}
 
 	var cd secCptChallengeData
-	if err := json.Unmarshal(decodedChallenge[:n], &cd); err != nil {
+	if err := easyjson.Unmarshal(decodedChallenge[:n], &cd); err != nil {
 		return nil, err
 	}
 
