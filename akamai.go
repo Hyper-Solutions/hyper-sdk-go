@@ -9,6 +9,11 @@ func (s *Session) GenerateSensorData(ctx context.Context, input *SensorInput) (s
 	return sendRequest(ctx, s, "https://akm.justhyped.dev/sensor", input)
 }
 
+// ParseV3Dynamic returns the dynamic values for a v3 dynamic script
+func (s *Session) ParseV3Dynamic(ctx context.Context, input *DynamicInput) (string, error) {
+	return sendRequest(ctx, s, "https://akm.justhyped.dev/v3dynamic", input)
+}
+
 // GeneratePixelData returns the pixel data using the Hyper Solutions API.
 func (s *Session) GeneratePixelData(ctx context.Context, input *PixelInput) (string, error) {
 	return sendRequest(ctx, s, "https://akm.justhyped.dev/pixel", input)

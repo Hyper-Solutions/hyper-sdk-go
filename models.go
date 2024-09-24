@@ -29,6 +29,9 @@ type SensorInput struct {
 
 	// ScriptHash is a sha256 checksum over the akamai script contents
 	ScriptHash string `json:"scriptHash"`
+
+	// DynamicValues is required for sites that use the dynamic version of v3, this value can be retrieved by [Session.ParseV3Dynamic]
+	DynamicValues string `json:"dynamicValues"`
 }
 
 type PixelInput struct {
@@ -36,6 +39,11 @@ type PixelInput struct {
 	UserAgent string `json:"userAgent"`
 	HTMLVar   string `json:"htmlVar"`
 	ScriptVar string `json:"scriptVar"`
+}
+
+type DynamicInput struct {
+	// Script is the akamai script's contents.
+	Script string `json:"script"`
 }
 
 type apiResponse struct {
