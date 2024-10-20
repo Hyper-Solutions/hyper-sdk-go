@@ -13,3 +13,8 @@ func (s *Session) GenerateDataDomeSlider(ctx context.Context, input *DataDomeSli
 func (s *Session) GenerateDataDomeInterstitial(ctx context.Context, input *DataDomeInterstitialInput) (string, error) {
 	return sendRequest(ctx, s, "https://datadome.justhyped.dev/interstitial", input)
 }
+
+// GenerateDataDomeTags returns the tags data string that is used in the POST request to receive a solved datadome cookie.
+func (s *Session) GenerateDataDomeTags(ctx context.Context, input *DataDomeTagsInput) (string, error) {
+	return sendRequest(ctx, s, "https://datadome.justhyped.dev/tags", input)
+}

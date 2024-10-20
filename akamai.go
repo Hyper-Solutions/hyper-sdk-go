@@ -18,3 +18,8 @@ func (s *Session) ParseV3Dynamic(ctx context.Context, input *DynamicInput) (stri
 func (s *Session) GeneratePixelData(ctx context.Context, input *PixelInput) (string, error) {
 	return sendRequest(ctx, s, "https://akm.justhyped.dev/pixel", input)
 }
+
+// GenerateSbsdData returns the sbsd payload using the Hyper Solutions API.
+func (s *Session) GenerateSbsdData(ctx context.Context, input *SbsdInput) (string, error) {
+	return sendRequest(ctx, s, "https://akm.justhyped.dev/sbsd", input)
+}

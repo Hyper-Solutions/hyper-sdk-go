@@ -32,6 +32,9 @@ type SensorInput struct {
 
 	// DynamicValues is required for sites that use the dynamic version of v3, this value can be retrieved by [Session.ParseV3Dynamic]
 	DynamicValues string `json:"dynamicValues"`
+
+	Language string `json:"language,omitempty"`
+	IP       string `json:"ip,omitempty"`
 }
 
 type PixelInput struct {
@@ -39,6 +42,16 @@ type PixelInput struct {
 	UserAgent string `json:"userAgent"`
 	HTMLVar   string `json:"htmlVar"`
 	ScriptVar string `json:"scriptVar"`
+}
+
+type SbsdInput struct {
+	// UserAgent must be a Chrome Windows User-Agent.
+	UserAgent string `json:"userAgent"`
+	Uuid      string `json:"uuid"`
+	PageUrl   string `json:"pageUrl"`
+	OCookie   string `json:"o"`
+	Language  string `json:"language,omitempty"`
+	IP        string `json:"ip,omitempty"`
 }
 
 type DynamicInput struct {
@@ -110,6 +123,9 @@ type DataDomeSliderInput struct {
 	// The URL that returns the puzzle looks like this:
 	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
 	Piece string `json:"piece"`
+
+	Language string `json:"language,omitempty"`
+	IP       string `json:"ip"`
 }
 
 type DataDomeInterstitialInput struct {
@@ -122,4 +138,20 @@ type DataDomeInterstitialInput struct {
 
 	// Html is the response body of the GET request to the DeviceLink
 	Html string `json:"html"`
+
+	Language string `json:"language,omitempty"`
+	IP       string `json:"ip"`
+}
+
+type DataDomeTagsInput struct {
+	// UserAgent must be a Chrome Windows User-Agent.
+	UserAgent string `json:"userAgent"`
+
+	Cid     string `json:"cid"`
+	Ddk     string `json:"ddk"`
+	Referer string `json:"referer"`
+	Type    string `json:"type"`
+
+	Language string `json:"language,omitempty"`
+	IP       string `json:"ip"`
 }
