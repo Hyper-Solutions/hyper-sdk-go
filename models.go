@@ -9,6 +9,12 @@ type UtmvcInput struct {
 	// Script is the UTMVC script contents
 	Script string `json:"script"`
 }
+type ReeseInput struct {
+	UserAgent string `json:"userAgent"`
+
+	Language string `json:"language,omitempty"`
+	IP       string `json:"ip,omitempty"`
+}
 
 type SensorInput struct {
 	// Abck is the _abck cookie retrieved from your cookiejar.
