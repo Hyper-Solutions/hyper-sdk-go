@@ -52,12 +52,13 @@ type PixelInput struct {
 
 type SbsdInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
-	UserAgent string `json:"userAgent"`
-	Uuid      string `json:"uuid"`
-	PageUrl   string `json:"pageUrl"`
-	OCookie   string `json:"o"`
-	Language  string `json:"language,omitempty"`
-	IP        string `json:"ip,omitempty"`
+	UserAgent  string `json:"userAgent"`
+	Uuid       string `json:"uuid"`
+	PageUrl    string `json:"pageUrl"`
+	OCookie    string `json:"o"`
+	ScriptHash string `json:"scriptHash"`
+	Language   string `json:"language,omitempty"`
+	IP         string `json:"ip,omitempty"`
 }
 
 type DynamicInput struct {
