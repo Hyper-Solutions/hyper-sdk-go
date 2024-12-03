@@ -6,15 +6,15 @@ import (
 
 // GenerateDataDomeSlider returns the URL that will return a solved datadome cookie when blocked by captcha.
 func (s *Session) GenerateDataDomeSlider(ctx context.Context, input *DataDomeSliderInput) (string, error) {
-	return sendRequest(ctx, s, "https://datadome.justhyped.dev/slider", input)
+	return sendRequest(ctx, s, "https://datadome.hypersolutions.co/slider", input)
 }
 
 // GenerateDataDomeInterstitial returns the form data string that is used in the POST request to receive a solved datadome cookie.
 func (s *Session) GenerateDataDomeInterstitial(ctx context.Context, input *DataDomeInterstitialInput) (string, error) {
-	return sendRequest(ctx, s, "https://datadome.justhyped.dev/interstitial", input)
+	return sendRequest(ctx, s, "https://datadome.hypersolutions.co/interstitial", input)
 }
 
 // GenerateDataDomeTags returns the tags data string that is used in the POST request to receive a solved datadome cookie.
 func (s *Session) GenerateDataDomeTags(ctx context.Context, input *DataDomeTagsInput) (string, error) {
-	return sendRequest(ctx, s, "https://datadome.justhyped.dev/tags", input)
+	return sendRequest(ctx, s, "https://datadome.hypersolutions.co/tags", input)
 }
