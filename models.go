@@ -83,6 +83,7 @@ type KasadaPayloadInput struct {
 
 	// Language is the first language of your accept-language header, it defaults to "en-US" if left empty.
 	Language string `json:"language,omitempty"`
+	IP       string `json:"ip,omitempty"`
 }
 
 type KasadaPowInput struct {
