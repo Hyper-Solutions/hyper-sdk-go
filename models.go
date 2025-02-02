@@ -67,8 +67,18 @@ type DynamicInput struct {
 }
 
 type apiResponse struct {
-	Payload string `json:"payload"`
-	Error   string `json:"error"`
+	Payload string   `json:"payload"`
+	Headers *Headers `json:"headers"`
+	Error   string   `json:"error"`
+}
+
+type Headers struct {
+	DeviceMemory    string `json:"sec-ch-device-memory"`
+	Mobile          string `json:"sec-ch-ua-mobile"`
+	Arch            string `json:"sec-ch-ua-arch"`
+	Platform        string `json:"sec-ch-ua-platform"`
+	Model           string `json:"sec-ch-ua-model"`
+	FullVersionList string `json:"sec-ch-ua-full-version-list"`
 }
 
 type KasadaPayloadInput struct {
