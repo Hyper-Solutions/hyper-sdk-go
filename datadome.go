@@ -11,12 +11,14 @@ import (
 	"net/http"
 )
 
-// GenerateDataDomeSlider returns the URL that will return a solved datadome cookie when blocked by captcha.
+// GenerateDataDomeSlider returns the URL that will return a solved datadome cookie when blocked by captcha, and
+// the extra sec-ch-* headers used on consequent requests.
 func (s *Session) GenerateDataDomeSlider(ctx context.Context, input *DataDomeSliderInput) (string, *Headers, error) {
 	return sendRequestDataDome(ctx, s, "https://datadome.justhyped.dev/slider", input)
 }
 
-// GenerateDataDomeInterstitial returns the form data string that is used in the POST request to receive a solved datadome cookie.
+// GenerateDataDomeInterstitial returns the form data string that is used in the POST request to receive a solved datadome cookie, and
+// the extra sec-ch-* headers used on consequent requests.
 func (s *Session) GenerateDataDomeInterstitial(ctx context.Context, input *DataDomeInterstitialInput) (string, *Headers, error) {
 	return sendRequestDataDome(ctx, s, "https://datadome.justhyped.dev/interstitial", input)
 }

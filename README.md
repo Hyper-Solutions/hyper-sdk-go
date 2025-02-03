@@ -193,7 +193,7 @@ for interstitial and slider.
 To generate payload data required for solving interstitial, use the `GenerateDataDomeInterstitial` function:
 
 ```go
-payload, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
+payload, headers, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
 // Set the required input fields
 })
 if err != nil {
@@ -207,7 +207,7 @@ if err != nil {
 To solve DataDome Slider, use the `GenerateDataDomeSlider` function:
 
 ```go
-checkUrl, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
+checkUrl, headers, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
     // Set the required input fields
 })
 if err != nil {
