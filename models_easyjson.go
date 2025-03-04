@@ -450,8 +450,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo4(in *jlexer.Lexer, 
 			out.PageUrl = string(in.String())
 		case "o":
 			out.OCookie = string(in.String())
-		case "scriptHash":
-			out.ScriptHash = string(in.String())
+		case "script":
+			out.Script = string(in.String())
 		case "language":
 			out.Language = string(in.String())
 		case "ip":
@@ -491,9 +491,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo4(out *jwriter.Write
 		out.String(string(in.OCookie))
 	}
 	{
-		const prefix string = ",\"scriptHash\":"
+		const prefix string = ",\"script\":"
 		out.RawString(prefix)
-		out.String(string(in.ScriptHash))
+		out.String(string(in.Script))
 	}
 	if in.Language != "" {
 		const prefix string = ",\"language\":"
