@@ -142,8 +142,9 @@ type DataDomeSliderInput struct {
 	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
 	Piece string `json:"piece"`
 
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip"`
+	ParentUrl string `json:"parentUrl"`
+	Language  string `json:"language"`
+	IP        string `json:"ip"`
 }
 
 type DataDomeInterstitialInput struct {

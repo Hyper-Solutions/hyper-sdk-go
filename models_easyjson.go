@@ -1285,6 +1285,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo13(in *jlexer.Lexer,
 			out.Puzzle = string(in.String())
 		case "piece":
 			out.Piece = string(in.String())
+		case "parentUrl":
+			out.ParentUrl = string(in.String())
 		case "language":
 			out.Language = string(in.String())
 		case "ip":
@@ -1328,7 +1330,12 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo13(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Piece))
 	}
-	if in.Language != "" {
+	{
+		const prefix string = ",\"parentUrl\":"
+		out.RawString(prefix)
+		out.String(string(in.ParentUrl))
+	}
+	{
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
