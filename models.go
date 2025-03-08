@@ -52,13 +52,13 @@ type PixelInput struct {
 
 type SbsdInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
-	UserAgent  string `json:"userAgent"`
-	Uuid       string `json:"uuid"`
-	PageUrl    string `json:"pageUrl"`
-	OCookie    string `json:"o"`
-	ScriptHash string `json:"scriptHash"`
-	Language   string `json:"language,omitempty"`
-	IP         string `json:"ip,omitempty"`
+	UserAgent string `json:"userAgent"`
+	Uuid      string `json:"uuid"`
+	PageUrl   string `json:"pageUrl"`
+	OCookie   string `json:"o"`
+	Script    string `json:"script"`
+	Language  string `json:"language,omitempty"`
+	IP        string `json:"ip,omitempty"`
 }
 
 type DynamicInput struct {
@@ -67,8 +67,18 @@ type DynamicInput struct {
 }
 
 type apiResponse struct {
-	Payload string `json:"payload"`
-	Error   string `json:"error"`
+	Payload string   `json:"payload"`
+	Headers *Headers `json:"headers"`
+	Error   string   `json:"error"`
+}
+
+type Headers struct {
+	DeviceMemory    string `json:"sec-ch-device-memory"`
+	Mobile          string `json:"sec-ch-ua-mobile"`
+	Arch            string `json:"sec-ch-ua-arch"`
+	Platform        string `json:"sec-ch-ua-platform"`
+	Model           string `json:"sec-ch-ua-model"`
+	FullVersionList string `json:"sec-ch-ua-full-version-list"`
 }
 
 type KasadaPayloadInput struct {
@@ -83,6 +93,7 @@ type KasadaPayloadInput struct {
 
 	// Language is the first language of your accept-language header, it defaults to "en-US" if left empty.
 	Language string `json:"language,omitempty"`
+	IP       string `json:"ip,omitempty"`
 }
 
 type KasadaPowInput struct {
@@ -131,8 +142,9 @@ type DataDomeSliderInput struct {
 	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
 	Piece string `json:"piece"`
 
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip"`
+	ParentUrl string `json:"parentUrl"`
+	Language  string `json:"language"`
+	IP        string `json:"ip"`
 }
 
 type DataDomeInterstitialInput struct {
