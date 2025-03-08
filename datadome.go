@@ -7,6 +7,8 @@ import (
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
+	"github.com/mailru/easyjson/buffer"
+	"github.com/mailru/easyjson/jwriter"
 	"io"
 	"net/http"
 )
@@ -33,10 +35,19 @@ func sendRequestDataDome[V easyjson.Marshaler](ctx context.Context, s *Session, 
 		return "", nil, errors.New("missing api key")
 	}
 
-	payload, err := easyjson.Marshal(input)
-	if err != nil {
-		return "", nil, err
+	w := jwriter.Writer{
+		Flags:        0,
+		Error:        nil,
+		Buffer:       buffer.Buffer{},
+		NoEscapeHTML: true,
 	}
+
+	input.MarshalEasyJSON(&w)
+
+	if w.Error != nil {
+		return "", nil, w.Error
+	}
+	payload := w.Buffer.BuildBytes()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
 	if err != nil {
