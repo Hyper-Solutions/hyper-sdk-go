@@ -1,7 +1,14 @@
 package hyper
 
 import (
+	"bytes"
 	"context"
+	"errors"
+	"fmt"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/mailru/easyjson"
+	"io"
+	"net/http"
 )
 
 // GenerateDataDomeSlider returns the URL that will return a solved datadome cookie when blocked by captcha, and
