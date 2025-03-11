@@ -11,9 +11,8 @@ type UtmvcInput struct {
 }
 type ReeseInput struct {
 	UserAgent string `json:"userAgent"`
-
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip,omitempty"`
+	Language  string `json:"language"`
+	IP        string `json:"ip"`
 }
 
 type SensorInput struct {
@@ -39,8 +38,8 @@ type SensorInput struct {
 	// DynamicValues is required for sites that use the dynamic version of v3, this value can be retrieved by [Session.ParseV3Dynamic]
 	DynamicValues string `json:"dynamicValues"`
 
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip,omitempty"`
+	Language string `json:"language"`
+	IP       string `json:"ip"`
 }
 
 type PixelInput struct {
@@ -48,6 +47,8 @@ type PixelInput struct {
 	UserAgent string `json:"userAgent"`
 	HTMLVar   string `json:"htmlVar"`
 	ScriptVar string `json:"scriptVar"`
+	Language  string `json:"language"`
+	IP        string `json:"ip"`
 }
 
 type SbsdInput struct {
@@ -57,8 +58,8 @@ type SbsdInput struct {
 	PageUrl   string `json:"pageUrl"`
 	OCookie   string `json:"o"`
 	Script    string `json:"script"`
-	Language  string `json:"language,omitempty"`
-	IP        string `json:"ip,omitempty"`
+	Language  string `json:"language"`
+	IP        string `json:"ip"`
 }
 
 type DynamicInput struct {
