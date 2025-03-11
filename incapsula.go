@@ -8,7 +8,7 @@ import (
 
 // GenerateReese84Sensor returns the sensor data required to generate valid reese84 cookies using the Hyper Solutions API.
 func (s *Session) GenerateReese84Sensor(ctx context.Context, site string, input *ReeseInput) (string, error) {
-	return sendRequest(ctx, s, "https://incapsula.justhyped.dev/reese84/"+url.PathEscape(site), input)
+	return sendRequest(ctx, s, "https://incapsula.hypersolutions.co/reese84/"+url.PathEscape(site), input)
 }
 
 // GenerateUtmvcCookie returns the utmvc cookie using the Hyper Solutions API.
@@ -21,6 +21,6 @@ func (s *Session) GenerateUtmvcCookie(ctx context.Context, input *UtmvcInput) (s
 		return "", errors.New("no session ids set")
 	}
 
-	const sensorEndpoint = "https://incapsula.justhyped.dev/utmvc"
+	const sensorEndpoint = "https://incapsula.hypersolutions.co/utmvc"
 	return sendRequest(ctx, s, sensorEndpoint, input)
 }
