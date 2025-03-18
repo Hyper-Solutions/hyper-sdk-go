@@ -172,6 +172,7 @@ type DataDomeTagsInput struct {
 	Referer string `json:"referer"`
 	Type    string `json:"type"`
 
-	Language string `json:"language,omitempty"`
+	Version  string `json:"version"`
+	Language string `json:"language"`
 	IP       string `json:"ip"`
 }

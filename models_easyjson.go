@@ -387,12 +387,12 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo3(out *jwriter.Write
 		out.RawString(prefix)
 		out.String(string(in.DynamicValues))
 	}
-	if in.Language != "" {
+	{
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
 	}
-	if in.IP != "" {
+	{
 		const prefix string = ",\"ip\":"
 		out.RawString(prefix)
 		out.String(string(in.IP))
@@ -495,12 +495,12 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo4(out *jwriter.Write
 		out.RawString(prefix)
 		out.String(string(in.Script))
 	}
-	if in.Language != "" {
+	{
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
 	}
-	if in.IP != "" {
+	{
 		const prefix string = ",\"ip\":"
 		out.RawString(prefix)
 		out.String(string(in.IP))
@@ -575,12 +575,12 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo5(out *jwriter.Write
 		out.RawString(prefix[1:])
 		out.String(string(in.UserAgent))
 	}
-	if in.Language != "" {
+	{
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
 	}
-	if in.IP != "" {
+	{
 		const prefix string = ",\"ip\":"
 		out.RawString(prefix)
 		out.String(string(in.IP))
@@ -636,6 +636,10 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo6(in *jlexer.Lexer, 
 			out.HTMLVar = string(in.String())
 		case "scriptVar":
 			out.ScriptVar = string(in.String())
+		case "language":
+			out.Language = string(in.String())
+		case "ip":
+			out.IP = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -664,6 +668,16 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo6(out *jwriter.Write
 		const prefix string = ",\"scriptVar\":"
 		out.RawString(prefix)
 		out.String(string(in.ScriptVar))
+	}
+	{
+		const prefix string = ",\"language\":"
+		out.RawString(prefix)
+		out.String(string(in.Language))
+	}
+	{
+		const prefix string = ",\"ip\":"
+		out.RawString(prefix)
+		out.String(string(in.IP))
 	}
 	out.RawByte('}')
 }
@@ -1177,6 +1191,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo12(in *jlexer.Lexer,
 			out.Referer = string(in.String())
 		case "type":
 			out.Type = string(in.String())
+		case "version":
+			out.Version = string(in.String())
 		case "language":
 			out.Language = string(in.String())
 		case "ip":
@@ -1220,7 +1236,12 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo12(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Type))
 	}
-	if in.Language != "" {
+	{
+		const prefix string = ",\"version\":"
+		out.RawString(prefix)
+		out.String(string(in.Version))
+	}
+	{
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
