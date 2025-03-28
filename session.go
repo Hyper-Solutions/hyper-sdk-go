@@ -12,11 +12,22 @@ type Session struct {
 	Client *http.Client
 }
 
+// Default optimized HTTP client for concurrent requests
+var defaultClient = &http.Client{
+	Timeout: 30 * time.Second,
+	Transport: &http.Transport{
+		MaxIdleConns:        0,
+		MaxIdleConnsPerHost: 100,
+		MaxConnsPerHost:     100,
+		IdleConnTimeout:     30 * time.Second,
+	},
+}
+
 // NewSession creates a new Session that can be used to make requests to the Hyper Solutions API.
 func NewSession(apiKey string) *Session {
 	return &Session{
 		ApiKey: apiKey,
-		Client: http.DefaultClient,
+		Client: defaultClient,
 	}
 }
 
