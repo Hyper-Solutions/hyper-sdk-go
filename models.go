@@ -13,6 +13,7 @@ type ReeseInput struct {
 	UserAgent string `json:"userAgent"`
 	Language  string `json:"language"`
 	IP        string `json:"ip"`
+	ScriptUrl string `json:"scriptUrl"`
 }
 
 type SensorInput struct {
