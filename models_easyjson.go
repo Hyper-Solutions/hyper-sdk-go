@@ -733,6 +733,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo7(in *jlexer.Lexer, 
 		switch key {
 		case "st":
 			out.St = int(in.Int())
+		case "ct":
+			out.Ct = string(in.String())
 		case "workTime":
 			if in.IsNull() {
 				in.Skip()
@@ -761,6 +763,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo7(out *jwriter.Write
 		const prefix string = ",\"st\":"
 		out.RawString(prefix[1:])
 		out.Int(int(in.St))
+	}
+	{
+		const prefix string = ",\"ct\":"
+		out.RawString(prefix)
+		out.String(string(in.Ct))
 	}
 	if in.WorkTime != nil {
 		const prefix string = ",\"workTime\":"
