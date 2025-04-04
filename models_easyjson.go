@@ -334,8 +334,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo3(in *jlexer.Lexer, 
 			out.ScriptHash = string(in.String())
 		case "dynamicValues":
 			out.DynamicValues = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -388,9 +388,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo3(out *jwriter.Write
 		out.String(string(in.DynamicValues))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -452,8 +452,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo4(in *jlexer.Lexer, 
 			out.OCookie = string(in.String())
 		case "script":
 			out.Script = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -496,9 +496,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo4(out *jwriter.Write
 		out.String(string(in.Script))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -552,8 +552,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo5(in *jlexer.Lexer, 
 		switch key {
 		case "userAgent":
 			out.UserAgent = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		case "scriptUrl":
@@ -578,9 +578,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo5(out *jwriter.Write
 		out.String(string(in.UserAgent))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -643,8 +643,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo6(in *jlexer.Lexer, 
 			out.HTMLVar = string(in.String())
 		case "scriptVar":
 			out.ScriptVar = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -677,9 +677,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo6(out *jwriter.Write
 		out.String(string(in.ScriptVar))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -825,8 +825,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo8(in *jlexer.Lexer, 
 			out.IpsLink = string(in.String())
 		case "script":
 			out.Script = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -858,10 +858,10 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo8(out *jwriter.Write
 		out.RawString(prefix)
 		out.String(string(in.Script))
 	}
-	if in.Language != "" {
-		const prefix string = ",\"language\":"
+	{
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	if in.IP != "" {
 		const prefix string = ",\"ip\":"
@@ -1207,8 +1207,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo12(in *jlexer.Lexer,
 			out.Type = string(in.String())
 		case "version":
 			out.Version = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -1256,9 +1256,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo12(out *jwriter.Writ
 		out.String(string(in.Version))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -1322,8 +1322,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo13(in *jlexer.Lexer,
 			out.Piece = string(in.String())
 		case "parentUrl":
 			out.ParentUrl = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -1371,9 +1371,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo13(out *jwriter.Writ
 		out.String(string(in.ParentUrl))
 	}
 	{
-		const prefix string = ",\"language\":"
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"
@@ -1431,8 +1431,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo14(in *jlexer.Lexer,
 			out.DeviceLink = string(in.String())
 		case "html":
 			out.Html = string(in.String())
-		case "language":
-			out.Language = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
 		default:
@@ -1464,10 +1464,10 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo14(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Html))
 	}
-	if in.Language != "" {
-		const prefix string = ",\"language\":"
+	{
+		const prefix string = ",\"acceptLanguage\":"
 		out.RawString(prefix)
-		out.String(string(in.Language))
+		out.String(string(in.AcceptLanguage))
 	}
 	{
 		const prefix string = ",\"ip\":"

@@ -10,10 +10,10 @@ type UtmvcInput struct {
 	Script string `json:"script"`
 }
 type ReeseInput struct {
-	UserAgent string `json:"userAgent"`
-	Language  string `json:"language"`
-	IP        string `json:"ip"`
-	ScriptUrl string `json:"scriptUrl"`
+	UserAgent      string `json:"userAgent"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
+	ScriptUrl      string `json:"scriptUrl"`
 }
 
 type SensorInput struct {
@@ -39,28 +39,28 @@ type SensorInput struct {
 	// DynamicValues is required for sites that use the dynamic version of v3, this value can be retrieved by [Session.ParseV3Dynamic]
 	DynamicValues string `json:"dynamicValues"`
 
-	Language string `json:"language"`
-	IP       string `json:"ip"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
 
 type PixelInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
-	UserAgent string `json:"userAgent"`
-	HTMLVar   string `json:"htmlVar"`
-	ScriptVar string `json:"scriptVar"`
-	Language  string `json:"language"`
-	IP        string `json:"ip"`
+	UserAgent      string `json:"userAgent"`
+	HTMLVar        string `json:"htmlVar"`
+	ScriptVar      string `json:"scriptVar"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
 
 type SbsdInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
-	UserAgent string `json:"userAgent"`
-	Uuid      string `json:"uuid"`
-	PageUrl   string `json:"pageUrl"`
-	OCookie   string `json:"o"`
-	Script    string `json:"script"`
-	Language  string `json:"language"`
-	IP        string `json:"ip"`
+	UserAgent      string `json:"userAgent"`
+	Uuid           string `json:"uuid"`
+	PageUrl        string `json:"pageUrl"`
+	OCookie        string `json:"o"`
+	Script         string `json:"script"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
 
 type DynamicInput struct {
@@ -93,9 +93,8 @@ type KasadaPayloadInput struct {
 	// Script is the ips.js script retrieved using the IpsLink url
 	Script string `json:"script"`
 
-	// Language is the first language of your accept-language header, it defaults to "en-US" if left empty.
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip,omitempty"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip,omitempty"`
 }
 
 type KasadaPowInput struct {
@@ -145,9 +144,9 @@ type DataDomeSliderInput struct {
 	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
 	Piece string `json:"piece"`
 
-	ParentUrl string `json:"parentUrl"`
-	Language  string `json:"language"`
-	IP        string `json:"ip"`
+	ParentUrl      string `json:"parentUrl"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
 
 type DataDomeInterstitialInput struct {
@@ -161,8 +160,8 @@ type DataDomeInterstitialInput struct {
 	// Html is the response body of the GET request to the DeviceLink
 	Html string `json:"html"`
 
-	Language string `json:"language,omitempty"`
-	IP       string `json:"ip"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
 
 type DataDomeTagsInput struct {
@@ -174,7 +173,7 @@ type DataDomeTagsInput struct {
 	Referer string `json:"referer"`
 	Type    string `json:"type"`
 
-	Version  string `json:"version"`
-	Language string `json:"language"`
-	IP       string `json:"ip"`
+	Version        string `json:"version"`
+	AcceptLanguage string `json:"acceptLanguage"`
+	IP             string `json:"ip"`
 }
