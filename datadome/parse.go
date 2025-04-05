@@ -48,6 +48,7 @@ func ParseInterstitialDeviceCheckLink(body io.Reader, datadomeCookie, referer st
 	form.Set("referer", referer)
 	form.Set("s", strconv.FormatInt(d.S, 10))
 	form.Set("b", strconv.FormatInt(d.B, 10))
+	form.Set("dm", "cd")
 
 	return "https://geo.captcha-delivery.com/interstitial/?" + form.URLEncode(), nil
 }
