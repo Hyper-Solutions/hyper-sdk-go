@@ -23,7 +23,7 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 		return nil, nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://kasada.justhyped.dev/payload", bytes.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://kasada.hypersolutions.co/payload", bytes.NewReader(payload))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -69,5 +69,5 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 
 // GenerateKasadaPow returns the x-kpsdk-cd value
 func (s *Session) GenerateKasadaPow(ctx context.Context, input *KasadaPowInput) (string, error) {
-	return sendRequest(ctx, s, "https://kasada.justhyped.dev/cd", input)
+	return sendRequest(ctx, s, "https://kasada.hypersolutions.co/cd", input)
 }
