@@ -43,32 +43,19 @@ func DecompressResponse(resp *http.Response) ([]byte, error) {
 		return io.ReadAll(resp.Body)
 	}
 
-	var (
-		body []byte
-		err  error
-	)
-
 	switch {
 	case strings.Contains(encoding, "gzip"):
-		body, err = handleGzip(resp.Body)
+		return handleGzip(resp.Body)
 	case strings.Contains(encoding, "zstd"):
-		body, err = handleZstd(resp.Body)
+		return handleZstd(resp.Body)
 	case strings.Contains(encoding, "br"):
-		body, err = handleBrotli(resp.Body)
+		return handleBrotli(resp.Body)
 	case strings.Contains(encoding, "deflate"):
-		body, err = handleDeflate(resp.Body)
+		return handleDeflate(resp.Body)
 	default:
 		// Unknown encoding, try to read as-is
 		return io.ReadAll(resp.Body)
 	}
-
-	resp.Body.Close()
-
-	resp.Body = io.NopCloser(bytes.NewBuffer(body))
-	resp.ContentLength = int64(len(body))
-	resp.Header.Del("Content-Encoding")
-
-	return body, err
 }
 
 func handleGzip(body io.ReadCloser) ([]byte, error) {
@@ -97,22 +84,22 @@ func handleBrotli(body io.ReadCloser) ([]byte, error) {
 }
 
 func handleDeflate(body io.ReadCloser) ([]byte, error) {
-	// The "deflate" content encoding is supposed to be the zlib format (RFC 1950)
-	// which wraps the deflate format (RFC 1951) with a header and checksum
-	reader, err := zlib.NewReader(body)
+	// Read the entire compressed body first
+	compressedData, err := io.ReadAll(body)
 	if err != nil {
-		// If zlib fails, try raw deflate as a fallback
-		// (some servers incorrectly use raw deflate)
-		bodyBytes, readErr := io.ReadAll(body)
-		if readErr != nil {
-			return nil, readErr
-		}
-
-		rawReader := flate.NewReader(bytes.NewReader(bodyBytes))
-		defer rawReader.Close()
-		return io.ReadAll(rawReader)
+		return nil, err
 	}
 
-	defer reader.Close()
-	return io.ReadAll(reader)
+	// First try with zlib (RFC 1950) which is the correct format for HTTP "deflate"
+	zlibReader, err := zlib.NewReader(bytes.NewReader(compressedData))
+	if err == nil {
+		defer zlibReader.Close()
+		return io.ReadAll(zlibReader)
+	}
+
+	// If zlib fails, try raw deflate as a fallback (RFC 1951)
+	// Some servers incorrectly send raw deflate data without the zlib wrapper
+	rawReader := flate.NewReader(bytes.NewReader(compressedData))
+	defer rawReader.Close()
+	return io.ReadAll(rawReader)
 }
