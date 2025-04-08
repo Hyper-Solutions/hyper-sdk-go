@@ -5,9 +5,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
-	"io"
 	"net/http"
 )
 
@@ -16,18 +16,34 @@ func sendRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url stri
 		return "", errors.New("missing api key")
 	}
 
-	payload, err := easyjson.Marshal(input)
+	payloadJSON, err := easyjson.Marshal(input)
 	if err != nil {
 		return "", err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
+	requestBodyBytes := payloadJSON
+	useCompression := false
+
+	if len(payloadJSON) > 1000 {
+		compressedBody, err := internal.CompressZstd(payloadJSON)
+		if err != nil {
+			return "", fmt.Errorf("failed to compress request body with zstd: %w", err)
+		}
+		requestBodyBytes = compressedBody
+		useCompression = true
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(requestBodyBytes))
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept-encoding", "gzip")
+	req.Header.Set("accept-encoding", "zstd")
 	req.Header.Set("x-api-key", s.ApiKey)
+
+	if useCompression {
+		req.Header.Set("content-encoding", "zstd")
+	}
 
 	if s.JwtKey != nil {
 		signature, err := s.generateSignature()
@@ -43,7 +59,7 @@ func sendRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url stri
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
 		return "", err
 	}

@@ -6,9 +6,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
-	"io"
 	"net/http"
 )
 
@@ -18,18 +18,25 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 		return nil, nil, errors.New("missing api key")
 	}
 
-	payload, err := easyjson.Marshal(input)
+	payloadJSON, err := easyjson.Marshal(input)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://kasada.justhyped.dev/payload", bytes.NewReader(payload))
+	compressedBody, err := internal.CompressZstd(payloadJSON)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to compress request body with zstd: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://kasada.justhyped.dev/payload", bytes.NewReader(compressedBody))
 	if err != nil {
 		return nil, nil, err
 	}
+
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept-encoding", "gzip")
+	req.Header.Set("accept-encoding", "zstd")
 	req.Header.Set("x-api-key", s.ApiKey)
+	req.Header.Set("content-encoding", "zstd")
 
 	if s.JwtKey != nil {
 		signature, err := s.generateSignature()
@@ -45,7 +52,7 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
 		return nil, nil, err
 	}
