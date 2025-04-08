@@ -9,7 +9,6 @@ import (
 	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
-	"io"
 	"net/http"
 )
 
@@ -53,7 +52,7 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
 		return nil, nil, err
 	}

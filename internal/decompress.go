@@ -3,7 +3,9 @@ package internal
 import (
 	"bytes"
 	"github.com/andybalholm/brotli"
+	"github.com/klauspost/compress/flate"
 	"github.com/klauspost/compress/gzip"
+	"github.com/klauspost/compress/zlib"
 	"github.com/klauspost/compress/zstd"
 	"io"
 	"net/http"
@@ -53,6 +55,8 @@ func DecompressResponse(resp *http.Response) ([]byte, error) {
 		body, err = handleZstd(resp.Body)
 	case strings.Contains(encoding, "br"):
 		body, err = handleBrotli(resp.Body)
+	case strings.Contains(encoding, "deflate"):
+		body, err = handleDeflate(resp.Body)
 	default:
 		// Unknown encoding, try to read as-is
 		return io.ReadAll(resp.Body)
@@ -90,4 +94,25 @@ func handleZstd(body io.ReadCloser) ([]byte, error) {
 func handleBrotli(body io.ReadCloser) ([]byte, error) {
 	brReader := brotli.NewReader(body)
 	return io.ReadAll(brReader)
+}
+
+func handleDeflate(body io.ReadCloser) ([]byte, error) {
+	// The "deflate" content encoding is supposed to be the zlib format (RFC 1950)
+	// which wraps the deflate format (RFC 1951) with a header and checksum
+	reader, err := zlib.NewReader(body)
+	if err != nil {
+		// If zlib fails, try raw deflate as a fallback
+		// (some servers incorrectly use raw deflate)
+		bodyBytes, readErr := io.ReadAll(body)
+		if readErr != nil {
+			return nil, readErr
+		}
+
+		rawReader := flate.NewReader(bytes.NewReader(bodyBytes))
+		defer rawReader.Close()
+		return io.ReadAll(rawReader)
+	}
+
+	defer reader.Close()
+	return io.ReadAll(reader)
 }

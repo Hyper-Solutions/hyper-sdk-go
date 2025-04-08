@@ -8,7 +8,6 @@ import (
 	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
-	"io"
 	"net/http"
 )
 
@@ -60,7 +59,7 @@ func sendRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url stri
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
 		return "", err
 	}
