@@ -5,11 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
 	"github.com/mailru/easyjson/buffer"
 	"github.com/mailru/easyjson/jwriter"
-	"io"
 	"net/http"
 )
 
@@ -49,12 +49,19 @@ func sendRequestDataDome[V easyjson.Marshaler](ctx context.Context, s *Session, 
 	}
 	payload := w.Buffer.BuildBytes()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
+	compressed, err := internal.CompressZstd(payload)
+	if err != nil {
+		return "", nil, err
+	}
+	body := bytes.NewReader(compressed)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return "", nil, err
 	}
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept-encoding", "gzip")
+	req.Header.Set("content-encoding", "zstd")
+	req.Header.Set("accept-encoding", "zstd")
 	req.Header.Set("x-api-key", s.ApiKey)
 
 	if s.JwtKey != nil {
@@ -71,7 +78,7 @@ func sendRequestDataDome[V easyjson.Marshaler](ctx context.Context, s *Session, 
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
 		return "", nil, err
 	}
