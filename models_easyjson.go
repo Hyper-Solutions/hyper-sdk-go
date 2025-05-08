@@ -118,6 +118,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo1(in *jlexer.Lexer, 
 		switch key {
 		case "payload":
 			out.Payload = string(in.String())
+		case "swhanedl":
+			out.Swhanedl = string(in.String())
 		case "headers":
 			if in.IsNull() {
 				in.Skip()
@@ -148,6 +150,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo1(out *jwriter.Write
 		const prefix string = ",\"payload\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Payload))
+	}
+	if in.Swhanedl != "" {
+		const prefix string = ",\"swhanedl\":"
+		out.RawString(prefix)
+		out.String(string(in.Swhanedl))
 	}
 	{
 		const prefix string = ",\"headers\":"

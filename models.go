@@ -69,9 +69,10 @@ type DynamicInput struct {
 }
 
 type apiResponse struct {
-	Payload string   `json:"payload"`
-	Headers *Headers `json:"headers"`
-	Error   string   `json:"error"`
+	Payload  string   `json:"payload"`
+	Swhanedl string   `json:"swhanedl,omitempty"`
+	Headers  *Headers `json:"headers"`
+	Error    string   `json:"error"`
 }
 
 type Headers struct {
