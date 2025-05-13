@@ -120,6 +120,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo1(in *jlexer.Lexer, 
 			out.Payload = string(in.String())
 		case "swhanedl":
 			out.Swhanedl = string(in.String())
+		case "context":
+			out.Context = string(in.String())
 		case "headers":
 			if in.IsNull() {
 				in.Skip()
@@ -155,6 +157,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo1(out *jwriter.Write
 		const prefix string = ",\"swhanedl\":"
 		out.RawString(prefix)
 		out.String(string(in.Swhanedl))
+	}
+	if in.Context != "" {
+		const prefix string = ",\"context\":"
+		out.RawString(prefix)
+		out.String(string(in.Context))
 	}
 	{
 		const prefix string = ",\"headers\":"
@@ -345,6 +352,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo3(in *jlexer.Lexer, 
 			out.AcceptLanguage = string(in.String())
 		case "ip":
 			out.IP = string(in.String())
+		case "context":
+			out.Context = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -403,6 +412,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo3(out *jwriter.Write
 		const prefix string = ",\"ip\":"
 		out.RawString(prefix)
 		out.String(string(in.IP))
+	}
+	{
+		const prefix string = ",\"context\":"
+		out.RawString(prefix)
+		out.String(string(in.Context))
 	}
 	out.RawByte('}')
 }

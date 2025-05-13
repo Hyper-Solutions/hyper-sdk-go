@@ -41,6 +41,7 @@ type SensorInput struct {
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
+	Context        string `json:"context"`
 }
 
 type PixelInput struct {
@@ -71,6 +72,7 @@ type DynamicInput struct {
 type apiResponse struct {
 	Payload  string   `json:"payload"`
 	Swhanedl string   `json:"swhanedl,omitempty"`
+	Context  string   `json:"context,omitempty"`
 	Headers  *Headers `json:"headers"`
 	Error    string   `json:"error"`
 }
