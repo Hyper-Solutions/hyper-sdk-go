@@ -8,34 +8,44 @@ import (
 	"github.com/Hyper-Solutions/hyper-sdk-go/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
+	"github.com/mailru/easyjson/buffer"
+	"github.com/mailru/easyjson/jwriter"
 	"net/http"
 )
 
-func sendRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url string, input V) (string, error) {
+func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Context, s *Session, url string, input V) (response T, err error) {
 	if s.ApiKey == "" {
-		return "", errors.New("missing api key")
+		return response, errors.New("missing api key")
 	}
 
-	payloadJSON, err := easyjson.Marshal(input)
-	if err != nil {
-		return "", err
+	w := jwriter.Writer{
+		Flags:        0,
+		Error:        nil,
+		Buffer:       buffer.Buffer{},
+		NoEscapeHTML: true,
 	}
 
-	requestBodyBytes := payloadJSON
+	input.MarshalEasyJSON(&w)
+
+	if w.Error != nil {
+		return response, w.Error
+	}
+	payload := w.Buffer.BuildBytes()
+
 	useCompression := false
 
-	if len(payloadJSON) > 1000 {
-		compressedBody, err := internal.CompressZstd(payloadJSON)
+	if len(payload) > 1000 {
+		compressedBody, err := internal.CompressZstd(payload)
 		if err != nil {
-			return "", fmt.Errorf("failed to compress request body with zstd: %w", err)
+			return response, fmt.Errorf("failed to compress request body with zstd: %w", err)
 		}
-		requestBodyBytes = compressedBody
+		payload = compressedBody
 		useCompression = true
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(requestBodyBytes))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
 	if err != nil {
-		return "", err
+		return response, err
 	}
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set("accept-encoding", "zstd")
@@ -48,30 +58,25 @@ func sendRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url stri
 	if s.JwtKey != nil {
 		signature, err := s.generateSignature()
 		if err != nil {
-			return "", err
+			return response, err
 		}
 		req.Header.Set("x-signature", signature)
 	}
 
 	resp, err := s.Client.Do(req)
 	if err != nil {
-		return "", err
+		return response, err
 	}
 	defer resp.Body.Close()
 
 	respBody, err := internal.DecompressResponse(resp)
 	if err != nil {
-		return "", err
+		return response, err
 	}
 
-	var response apiResponse
 	if err := jsoniter.Unmarshal(respBody, &response); err != nil {
-		return "", err
+		return response, err
 	}
 
-	if response.Error != "" {
-		return "", fmt.Errorf("api returned with: %s", response.Error)
-	}
-
-	return response.Payload, nil
+	return response, nil
 }
