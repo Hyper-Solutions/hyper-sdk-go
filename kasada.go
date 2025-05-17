@@ -8,7 +8,7 @@ import (
 
 // GenerateKasadaPayload returns the payload to POST to /tl in bytes, and the generated headers
 func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloadInput) ([]byte, *KasadaHeaders, error) {
-	response, err := sendRequest[*KasadaPayloadInput, *kasadaPayloadOutput](ctx, s, "https://kasada.justhyped.dev/payload", input)
+	response, err := sendRequest[*KasadaPayloadInput, *kasadaPayloadOutput](ctx, s, "https://kasada.hypersolutions.co/payload", input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -27,7 +27,7 @@ func (s *Session) GenerateKasadaPayload(ctx context.Context, input *KasadaPayloa
 
 // GenerateKasadaPow returns the x-kpsdk-cd value
 func (s *Session) GenerateKasadaPow(ctx context.Context, input *KasadaPowInput) (string, error) {
-	response, err := sendRequest[*KasadaPowInput, *apiResponse](ctx, s, "https://kasada.justhyped.dev/cd", input)
+	response, err := sendRequest[*KasadaPowInput, *apiResponse](ctx, s, "https://kasada.hypersolutions.co/cd", input)
 	if err != nil {
 		return "", err
 	}
