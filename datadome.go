@@ -8,7 +8,7 @@ import (
 // GenerateDataDomeSlider returns the URL that will return a solved datadome cookie when blocked by captcha, and
 // the extra sec-ch-* headers used on consequent requests.
 func (s *Session) GenerateDataDomeSlider(ctx context.Context, input *DataDomeSliderInput) (string, *Headers, error) {
-	response, err := sendRequest[*DataDomeSliderInput, *apiResponse](ctx, s, "https://datadome.justhyped.dev/slider", input)
+	response, err := sendRequest[*DataDomeSliderInput, *apiResponse](ctx, s, "https://datadome.hypersolutions.co/slider", input)
 	if err != nil {
 		return "", nil, err
 	}
@@ -23,7 +23,7 @@ func (s *Session) GenerateDataDomeSlider(ctx context.Context, input *DataDomeSli
 // GenerateDataDomeInterstitial returns the form data string that is used in the POST request to receive a solved datadome cookie, and
 // the extra sec-ch-* headers used on consequent requests.
 func (s *Session) GenerateDataDomeInterstitial(ctx context.Context, input *DataDomeInterstitialInput) (string, *Headers, error) {
-	response, err := sendRequest[*DataDomeInterstitialInput, *apiResponse](ctx, s, "https://datadome.justhyped.dev/interstitial", input)
+	response, err := sendRequest[*DataDomeInterstitialInput, *apiResponse](ctx, s, "https://datadome.hypersolutions.co/interstitial", input)
 	if err != nil {
 		return "", nil, err
 	}
@@ -37,7 +37,7 @@ func (s *Session) GenerateDataDomeInterstitial(ctx context.Context, input *DataD
 
 // GenerateDataDomeTags returns the tags data string that is used in the POST request to receive a solved datadome cookie.
 func (s *Session) GenerateDataDomeTags(ctx context.Context, input *DataDomeTagsInput) (string, error) {
-	response, err := sendRequest[*DataDomeTagsInput, *apiResponse](ctx, s, "https://datadome.justhyped.dev/tags", input)
+	response, err := sendRequest[*DataDomeTagsInput, *apiResponse](ctx, s, "https://datadome.hypersolutions.co/tags", input)
 	if err != nil {
 		return "", err
 	}
