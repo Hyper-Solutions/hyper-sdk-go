@@ -14,6 +14,7 @@ type ReeseInput struct {
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
 	ScriptUrl      string `json:"scriptUrl"`
+	PageUrl        string `json:"pageUrl"`
 }
 
 type SensorInput struct {

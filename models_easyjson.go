@@ -579,6 +579,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGo5(in *jlexer.Lexer, 
 			out.IP = string(in.String())
 		case "scriptUrl":
 			out.ScriptUrl = string(in.String())
+		case "pageUrl":
+			out.PageUrl = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -612,6 +614,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGo5(out *jwriter.Write
 		const prefix string = ",\"scriptUrl\":"
 		out.RawString(prefix)
 		out.String(string(in.ScriptUrl))
+	}
+	{
+		const prefix string = ",\"pageUrl\":"
+		out.RawString(prefix)
+		out.String(string(in.PageUrl))
 	}
 	out.RawByte('}')
 }
