@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Hyper-Solutions/hyper-sdk-go/akamai/internal"
+	"github.com/Hyper-Solutions/hyper-sdk-go/v2/akamai/internal"
 	"github.com/Hyper-Solutions/orderedobject"
 	jsoniter "github.com/json-iterator/go"
 )

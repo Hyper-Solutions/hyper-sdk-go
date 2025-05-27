@@ -5,7 +5,7 @@
 To use the Hyper Solutions SDK in your Go project, you need to install it using the following command:
 
 ```
-go get github.com/Hyper-Solutions/hyper-sdk-go
+go get github.com/Hyper-Solutions/hyper-sdk-go/v2
 ```
 
 ## Usage
