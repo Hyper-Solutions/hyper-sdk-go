@@ -16,6 +16,7 @@ type ReeseInput struct {
 	ScriptUrl      string `json:"scriptUrl"`
 	PageUrl        string `json:"pageUrl"`
 	Wasm           string `json:"wasm"`
+	Pow            string `json:"pow"`
 }
 
 type SensorInput struct {
