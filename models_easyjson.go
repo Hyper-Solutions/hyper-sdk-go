@@ -463,6 +463,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV24(in *jlexer.Lexer
 			continue
 		}
 		switch key {
+		case "index":
+			out.Index = int(in.Int())
 		case "userAgent":
 			out.UserAgent = string(in.String())
 		case "uuid":
@@ -492,8 +494,13 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV24(out *jwriter.Wri
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"userAgent\":"
+		const prefix string = ",\"index\":"
 		out.RawString(prefix[1:])
+		out.Int(int(in.Index))
+	}
+	{
+		const prefix string = ",\"userAgent\":"
+		out.RawString(prefix)
 		out.String(string(in.UserAgent))
 	}
 	{

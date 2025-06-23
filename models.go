@@ -57,6 +57,7 @@ type PixelInput struct {
 }
 
 type SbsdInput struct {
+	Index int `json:"index"`
 	// UserAgent must be a Chrome Windows User-Agent.
 	UserAgent      string `json:"userAgent"`
 	Uuid           string `json:"uuid"`
