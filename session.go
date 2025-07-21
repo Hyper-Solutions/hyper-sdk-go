@@ -52,7 +52,7 @@ func (s *Session) WithClient(client *http.Client) *Session {
 	return s
 }
 
-func (s *Session) generateSignature(key string, jwtKey []byte) (string, error) {
+func generateSignature(key string, jwtKey []byte) (string, error) {
 	claims := jwt.MapClaims{
 		"key": key,
 		"exp": time.Now().Add(time.Minute).Unix(),

@@ -56,14 +56,14 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 	}
 
 	if s.JwtKey != nil {
-		signature, err := s.generateSignature(s.ApiKey, s.JwtKey)
+		signature, err := generateSignature(s.ApiKey, s.JwtKey)
 		if err != nil {
 			return response, err
 		}
 		req.Header.Set("x-signature", signature)
 	}
 	if s.AppSecret != nil {
-		signature, err := s.generateSignature(s.AppKey, s.AppSecret)
+		signature, err := generateSignature(s.AppKey, s.AppSecret)
 		if err != nil {
 			return response, err
 		}
