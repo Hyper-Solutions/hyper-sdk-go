@@ -7,9 +7,11 @@ import (
 )
 
 type Session struct {
-	ApiKey string
-	JwtKey []byte
-	Client *http.Client
+	ApiKey    string
+	JwtKey    []byte
+	AppKey    string
+	AppSecret []byte
+	Client    *http.Client
 }
 
 // Default optimized HTTP client for concurrent requests
@@ -37,20 +39,27 @@ func (s *Session) WithJwtKey(jwt string) *Session {
 	return s
 }
 
+// WithOrganization adds the organization to the session.
+func (s *Session) WithOrganization(key, secret string) *Session {
+	s.AppKey = key
+	s.AppSecret = []byte(secret)
+	return s
+}
+
 // WithClient sets a new client that will be used to make requests to the Hyper Solutions API.
 func (s *Session) WithClient(client *http.Client) *Session {
 	s.Client = client
 	return s
 }
 
-func (s *Session) generateSignature() (string, error) {
+func (s *Session) generateSignature(key string, jwtKey []byte) (string, error) {
 	claims := jwt.MapClaims{
-		"key": s.ApiKey,
+		"key": key,
 		"exp": time.Now().Add(time.Minute).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := token.SignedString(s.JwtKey)
+	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
 		return "", err
 	}
