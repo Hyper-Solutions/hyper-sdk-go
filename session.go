@@ -6,12 +6,21 @@ import (
 	"time"
 )
 
+// CompressionType represents the compression algorithm to use
+type CompressionType string
+
+const (
+	CompressionZstd CompressionType = "zstd"
+	CompressionGzip CompressionType = "gzip"
+)
+
 type Session struct {
-	ApiKey    string
-	JwtKey    []byte
-	AppKey    string
-	AppSecret []byte
-	Client    *http.Client
+	ApiKey      string
+	JwtKey      []byte
+	AppKey      string
+	AppSecret   []byte
+	Client      *http.Client
+	Compression CompressionType
 }
 
 // Default optimized HTTP client for concurrent requests
@@ -28,8 +37,9 @@ var defaultClient = &http.Client{
 // NewSession creates a new Session that can be used to make requests to the Hyper Solutions API.
 func NewSession(apiKey string) *Session {
 	return &Session{
-		ApiKey: apiKey,
-		Client: defaultClient,
+		ApiKey:      apiKey,
+		Client:      defaultClient,
+		Compression: CompressionZstd,
 	}
 }
 
@@ -49,6 +59,12 @@ func (s *Session) WithOrganization(key, secret string) *Session {
 // WithClient sets a new client that will be used to make requests to the Hyper Solutions API.
 func (s *Session) WithClient(client *http.Client) *Session {
 	s.Client = client
+	return s
+}
+
+// WithCompression sets the compression type for requests.
+func (s *Session) WithCompression(compression CompressionType) *Session {
+	s.Compression = compression
 	return s
 }
 
