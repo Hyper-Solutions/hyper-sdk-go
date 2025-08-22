@@ -1,249 +1,297 @@
-# Hyper Solutions SDK
+# Hyper Solutions SDK - Go Library for Bot Protection Bypass (Akamai, Incapsula, Kasada, DataDome)
 
-## Installation
+![Go Version](https://img.shields.io/badge/Go-1.22+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![GitHub Release](https://img.shields.io/github/v/release/Hyper-Solutions/hyper-sdk-go)
+![GitHub Stars](https://img.shields.io/github/stars/Hyper-Solutions/hyper-sdk-go)
 
-To use the Hyper Solutions SDK in your Go project, you need to install it using the following command:
+[![](https://dcbadge.limes.pink/api/server/akamai)](https://discord.gg/akamai)
 
+A powerful **Go SDK** for bypassing modern bot protection systems including **Akamai Bot Manager**, **Incapsula**, **Kasada**, and **DataDome**. Generate valid cookies, solve anti-bot challenges, and automate protected endpoints with ease.
+
+Perfect for **web scraping**, **automation**, and **data collection** from protected websites.
+
+## 🚀 Quick Start
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "github.com/Hyper-Solutions/hyper-sdk-go/v2"
+)
+
+func main() {
+    session := hyper.NewSession("your-api-key")
+    
+    // Generate Akamai sensor data
+    sensorData, sensorContext, err := session.GenerateSensorData(context.Background(), &hyper.SensorInput{
+        // Configure your sensor input
+    })
+    if err != nil {
+        panic(err)
+    }
+    
+    fmt.Printf("Generated sensor data: %s", sensorData)
+    fmt.Printf("Sensor context: %s", sensorContext)
+}
 ```
+
+## ✨ Features
+
+- 🛡️ **Akamai Bot Manager**: Generate sensor data, handle pixel challenges, validate cookies
+- 🔒 **Incapsula Protection**: Generate Reese84 sensors and UTMVC cookies
+- ⚡ **Kasada Bypass**: Generate payload data (CT) and POW tokens (CD)
+- 🎯 **DataDome Solutions**: Solve tags, slider captchas and interstitial challenges
+- 🔧 **Easy Integration**: Simple Go API with comprehensive documentation
+- ⚙️ **Flexible Configuration**: Custom HTTP clients and JWT key support
+
+## 📦 Installation
+
+Install the Hyper Solutions SDK for Go using:
+
+```bash
 go get github.com/Hyper-Solutions/hyper-sdk-go/v2
 ```
 
-## Usage
+## 📋 Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Basic Usage](#-basic-usage)
+- [Akamai Bot Manager](#-akamai-bot-manager)
+- [Incapsula Protection](#-incapsula-protection)
+- [Kasada Bypass](#-kasada-bypass)
+- [DataDome Solutions](#-datadome-solutions)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## 🔧 Basic Usage
 
 ### Creating a Session
 
-To start using the SDK, you need to create a new `Session` instance by providing your API key:
+Initialize the SDK with your API key to start bypassing bot protection:
 
 ```go
+// Basic session
 session := hyper.NewSession("your-api-key")
-```
 
-You can also optionally set a JWT key and a custom HTTP client:
-
-```go
+// Advanced session with custom configuration
 session := hyper.NewSession("your-api-key").
     WithJwtKey("your-jwt-key").
     WithClient(customHTTPClient)
 ```
 
-## Akamai
+## 🛡️ Akamai Bot Manager
 
-The Akamai package provides functions for interacting with Akamai Bot Manager, including generating sensor data, parsing script path, parsing pixel challenges, and handling sec-cpt challenges.
+Bypass **Akamai Bot Manager** protection with sensor data generation, cookie validation, and challenge solving.
 
 ### Generating Sensor Data
 
-To generate sensor data required for generating valid Akamai cookies, use the `GenerateSensorData` function:
+Generate sensor data for valid **Akamai cookies** and bot detection bypass:
 
 ```go
 sensorData, err := session.GenerateSensorData(ctx, &hyper.SensorInput{
-    // Set the required input fields
+    // Configure sensor parameters
 })
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
 ### Parsing Script Path
 
-To parse the Akamai Bot Manager script path from the given HTML code, use the `ParseScriptPath` function:
+Extract Akamai Bot Manager script paths from HTML for **reverse engineering**:
 
 ```go
 scriptPath, err := akamai.ParseScriptPath(reader)
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
 ### Handling Sec-Cpt Challenges
 
-The Akamai package provides functions for handling sec-cpt challenges:
+Solve **sec-cpt challenges** with built-in parsing and payload generation:
 
-- `ParseSecCptChallenge`: Parses a sec-cpt challenge from an `io.Reader`.
-- `ParseSecCptChallengeFromJson`: Parses a sec-cpt challenge from an `io.Reader`.
-- `GenerateSecCptPayload`: Generates a sec-cpt payload using the provided sec-cpt cookie.
-- `Sleep`: Sleeps for the duration specified in the sec-cpt challenge.
-- `SleepWithContext`: Sleeps for the duration specified in the sec-cpt challenge, this is context aware.
+- `ParseSecCptChallenge`: Parse sec-cpt challenges from HTML
+- `ParseSecCptChallengeFromJson`: Parse from JSON responses
+- `GenerateSecCptPayload`: Generate challenge response payloads
+- `Sleep`: Handle challenge timing requirements
+- `SleepWithContext`: Context-aware challenge delays
 
-### Validating Cookies
+### Cookie Validation
 
-The Akamai package provides functions for validating cookies:
+Validate **Akamai _abck cookies** and session states:
 
-- `IsCookieValid`: Determines if the provided `_abck` cookie value is valid based on the given request count.
-- `IsCookieInvalidated`: Determines if the current session requires more sensors to be sent.
+- `IsCookieValid`: Check cookie validity for request counts
+- `IsCookieInvalidated`: Determine if more sensors are needed
 
+### Pixel Challenge Solving
 
-### Generating Pixel Data
-
-To generate pixel data, use the `GeneratePixelData` function:
+Handle **Akamai pixel challenges** for advanced bot detection bypass:
 
 ```go
 pixelData, err := session.GeneratePixelData(ctx, &hyper.PixelInput{
-    // Set the required input fields
+    // Pixel challenge parameters
 })
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
-### Parsing Pixel Challenges
+**Pixel parsing functions**:
+- `ParsePixelHtmlVar`: Extract pixel variables from HTML
+- `ParsePixelScriptURL`: Get pixel script and POST URLs
+- `ParsePixelScriptVar`: Parse dynamic pixel values
 
-The Akamai package provides functions for parsing pixel challenges:
+## 🔒 Incapsula Protection
 
-- `ParsePixelHtmlVar`: Parses the required pixel challenge variable from the given HTML code.
-- `ParsePixelScriptURL`: Parses the script URL of the pixel challenge script and the URL to post a generated payload to from the given HTML code.
-- `ParsePixelScriptVar`: Parses the dynamic value from the pixel script.
-## Incapsula
+Bypass **Incapsula bot detection** with Reese84 sensors and UTMVC cookie generation.
 
-The Incapsula package provides functions for interacting with Incapsula, including generating Reese84 sensor data, UTMVC cookies, and parsing UTMVC script paths.
+### Generating Reese84 Sensors
 
-### Generating Reese84 Sensor
-
-To generate sensor data required for generating valid Reese84 cookies, use the `GenerateReese84Sensor` function:
+Create **Reese84 sensor data** for Incapsula bypass:
 
 ```go
 sensorData, err := session.GenerateReese84Sensor(ctx, site, userAgent)
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
-### Generating UTMVC Cookie
+### UTMVC Cookie Generation
 
-To generate the UTMVC cookie using the Hyper Solutions API, use the `GenerateUtmvcCookie` function:
+Generate **UTMVC cookies** for Incapsula protection bypass:
 
 ```go
 utmvcCookie, err := session.GenerateUtmvcCookie(ctx, &hyper.UtmvcInput{
-    Script: "your-script",
+    Script: "incapsula-script-content",
     SessionIds: []string{"session-id-1", "session-id-2"},
-    UserAgent: "user-agent-here"
+    UserAgent: "Mozilla/5.0 (compatible bot)"
 })
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
-### Parsing UTMVC Script Path
+### Script Path Parsing
 
-To parse the UTMVC script path from a given script content, use the `ParseUtmvcScriptPath` function:
+Parse **UTMVC script paths** for Incapsula integration:
 
 ```go
 scriptPath, err := incapsula.ParseUtmvcScriptPath(scriptReader)
 if err != nil {
-    // Handle the error
+    // Handle error
 }
-```
 
-### Generating UTMVC Submit Path
-
-To generate a unique UTMVC submit path with a random query parameter, use the `GetUtmvcSubmitPath` function:
-
-```go
+// Generate submit path
 submitPath := incapsula.GetUtmvcSubmitPath()
 ```
 
-## Kasada
+## ⚡ Kasada Bypass
 
-The Kasada package provides functions for interacting with Kasada Bot Manager, including parsing script path.
+Defeat **Kasada Bot Manager** with payload generation and POW solving.
 
 ### Generating Payload Data (CT)
 
-To generate payload data required for generating valid `x-kpsdk-ct` tokens, use the `GenerateKasadaPayload` function:
+Create **x-kpsdk-ct tokens** for Kasada bypass:
 
 ```go
 payload, headers, err := session.GenerateKasadaPayload(ctx, &hyper.KasadaPayloadInput{
-// Set the required input fields
+    // Kasada payload configuration
 })
 if err != nil {
-// Handle the error
+    // Handle error
 }
 ```
 
-### Generating Pow Data (CD)
+### Generating POW Data (CD)
 
-To generate POW data (`x-kpsdk-cd`) tokens, use the `GenerateKasadaPow` function:
+Solve **Kasada Proof-of-Work** challenges for x-kpsdk-cd tokens:
 
 ```go
-payload, err := session.GenerateKasadaPow(ctx, &hyper.KasadaPowInput{
-    // Set the required input fields
+powPayload, err := session.GenerateKasadaPow(ctx, &hyper.KasadaPowInput{
+    // POW challenge parameters
 })
 if err != nil {
-    // Handle the error
+    // Handle error
 }
 ```
 
-### Parsing Script Path
+### Script Path Extraction
 
-To parse the Kasada script path from the given blocked page (status code 429) HTML code, use the `ParseScriptPath` function:
+Extract **Kasada script paths** from blocked pages (HTTP 429):
 
 ```go
 scriptPath, err := kasada.ParseScriptPath(reader)
 if err != nil {
-    // Handle the error
+    // Handle error
 }
-// will look like: /ips.js?...
+// Returns: /ips.js?timestamp=...
 ```
 
-## DataDome
+## 🎯 DataDome Solutions
 
-The DataDome package provides functions for interacting with DataDome Bot Manager, including parsing device link URLs
-for interstitial and slider.
+Solve **DataDome captchas** including slider challenges and interstitial pages.
 
-### Generating Interstitial Payload
+### Interstitial Challenge Solving
 
-To generate payload data required for solving interstitial, use the `GenerateDataDomeInterstitial` function:
+Bypass **DataDome interstitial pages**:
 
 ```go
 payload, headers, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
-// Set the required input fields
+    // Interstitial parameters
 })
 if err != nil {
-// Handle the error
+    // Handle error
 }
-// Use the payload to POST to https://geo.captcha-delivery.com/interstitial/
+// POST payload to https://geo.captcha-delivery.com/interstitial/
 ```
 
-### Generating Slider Payload
+### Slider Captcha Solving
 
-To solve DataDome Slider, use the `GenerateDataDomeSlider` function:
+Solve **DataDome slider captchas** automatically:
 
 ```go
 checkUrl, headers, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
-    // Set the required input fields
+    // Slider challenge parameters
 })
 if err != nil {
-    // Handle the error
+    // Handle error
 }
-// Create a GET request to the checkUrl
+// GET request to checkUrl
 ```
 
-### Parsing Interstitial DeviceLink URL
+### DeviceLink URL Parsing
 
-To parse the Interstitial DeviceLink URL from the HTML code, use the `ParseInterstitialDeviceCheckLink` function:
+Extract **DataDome device check URLs**:
 
 ```go
+// Interstitial device links
 deviceLink, err := datadome.ParseInterstitialDeviceCheckLink(reader, datadomeCookie, referer)
 if err != nil {
-// Handle the error
+    // Handle error
 }
-// deviceLink will look like: https://geo.captcha-delivery.com/interstitial/?...
-```
 
-### Parsing Slider DeviceLink URL
-
-To parse the Slider DeviceLink URL from the HTML code, use the `ParseSliderDeviceCheckLink` function:
-
-```go
+// Slider device links  
 deviceLink, err := datadome.ParseSliderDeviceCheckLink(reader, datadomeCookie, referer)
 if err != nil {
-    // Handle the error
+    // Handle error
 }
-// deviceLink will look like: https://geo.captcha-delivery.com/captcha/?...
 ```
 
-## Contributing
+### Getting Help
 
-If you find any issues or have suggestions for improvement, please open an issue or submit a pull request.
+- Check our [documentation](https://docs.justhyped.dev)
+- Join our [Discord community](https://discord.gg/akamai)
 
-## License
+## 📄 License
 
 This SDK is licensed under the [MIT License](LICENSE).
+
+---
+
+**Keywords**: Go SDK, Golang, bot protection bypass, web scraping, Akamai bypass, Incapsula bypass, Kasada bypass, DataDome bypass, anti-bot, captcha solver, automation, reverse engineering, bot detection, web automation
