@@ -853,6 +853,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV28(in *jlexer.Lexer
 			out.Wasm = string(in.String())
 		case "pow":
 			out.Pow = string(in.String())
+		case "script":
+			out.Script = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -901,6 +903,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV28(out *jwriter.Wri
 		const prefix string = ",\"pow\":"
 		out.RawString(prefix)
 		out.String(string(in.Pow))
+	}
+	{
+		const prefix string = ",\"script\":"
+		out.RawString(prefix)
+		out.String(string(in.Script))
 	}
 	out.RawByte('}')
 }
