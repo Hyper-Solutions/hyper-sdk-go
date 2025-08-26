@@ -15,7 +15,6 @@ type ReeseInput struct {
 	IP             string `json:"ip"`
 	ScriptUrl      string `json:"scriptUrl"`
 	PageUrl        string `json:"pageUrl"`
-	Wasm           string `json:"wasm"`
 	Pow            string `json:"pow"`
 	Script         string `json:"script"`
 }

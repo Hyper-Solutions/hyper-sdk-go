@@ -849,8 +849,6 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV28(in *jlexer.Lexer
 			out.ScriptUrl = string(in.String())
 		case "pageUrl":
 			out.PageUrl = string(in.String())
-		case "wasm":
-			out.Wasm = string(in.String())
 		case "pow":
 			out.Pow = string(in.String())
 		case "script":
@@ -893,11 +891,6 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV28(out *jwriter.Wri
 		const prefix string = ",\"pageUrl\":"
 		out.RawString(prefix)
 		out.String(string(in.PageUrl))
-	}
-	{
-		const prefix string = ",\"wasm\":"
-		out.RawString(prefix)
-		out.String(string(in.Wasm))
 	}
 	{
 		const prefix string = ",\"pow\":"
