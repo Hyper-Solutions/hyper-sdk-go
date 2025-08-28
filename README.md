@@ -11,6 +11,17 @@ A powerful **Go SDK** for bypassing modern bot protection systems including **Ak
 
 Perfect for **web scraping**, **automation**, and **data collection** from protected websites.
 
+## 🔑 Getting API Access
+
+Before using this SDK, you'll need an API key from Hyper Solutions:
+
+1. **Visit [hypersolutions.co](https://hypersolutions.co/)** to create your account
+2. **Choose your plan**:
+    - 💳 **Pay-as-you-go**: Perfect for testing and small-scale usage
+    - 📊 **Subscription plans**: Cost-effective for high-volume applications
+3. **Get your API key** from the dashboard
+4. **Start bypassing bot protection** with this SDK!
+
 ## 🚀 Quick Start
 
 ```go
