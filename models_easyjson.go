@@ -1045,6 +1045,10 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV210(in *jlexer.Lexe
 			out.St = int(in.Int())
 		case "ct":
 			out.Ct = string(in.String())
+		case "domain":
+			out.Domain = string(in.String())
+		case "script":
+			out.Script = string(in.String())
 		case "workTime":
 			if in.IsNull() {
 				in.Skip()
@@ -1078,6 +1082,16 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV210(out *jwriter.Wr
 		const prefix string = ",\"ct\":"
 		out.RawString(prefix)
 		out.String(string(in.Ct))
+	}
+	{
+		const prefix string = ",\"domain\":"
+		out.RawString(prefix)
+		out.String(string(in.Domain))
+	}
+	{
+		const prefix string = ",\"script\":"
+		out.RawString(prefix)
+		out.String(string(in.Script))
 	}
 	if in.WorkTime != nil {
 		const prefix string = ",\"workTime\":"

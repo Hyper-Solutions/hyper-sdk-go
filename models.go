@@ -108,9 +108,10 @@ type KasadaPayloadInput struct {
 
 type KasadaPowInput struct {
 	// St is the x-kpsdk-st value returned by the /tl POST request
-	St int    `json:"st"`
-	Ct string `json:"ct"`
-
+	St     int    `json:"st"`
+	Ct     string `json:"ct"`
+	Domain string `json:"domain"`
+	Script string `json:"script"`
 	// WorkTime can be used to pre-generate POW strings
 	WorkTime *int `json:"workTime,omitempty"`
 }
