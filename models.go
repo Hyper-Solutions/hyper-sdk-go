@@ -36,11 +36,9 @@ type SensorInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
 	UserAgent string `json:"userAgent"`
 
-	// ScriptHash is a sha256 checksum over the akamai script contents
-	ScriptHash string `json:"scriptHash"`
-
-	// DynamicValues is required for sites that use the dynamic version of v3, this value can be retrieved by [Session.ParseV3Dynamic]
-	DynamicValues string `json:"dynamicValues"`
+	// Script is mutually exclusive with [SensorInput.Context], the first sensor request should include the script field.
+	// 	Subsequent request should only include the Context.
+	Script string `json:"script"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
@@ -110,6 +108,7 @@ type KasadaPowInput struct {
 	// St is the x-kpsdk-st value returned by the /tl POST request
 	St     int    `json:"st"`
 	Ct     string `json:"ct"`
+	Fc     string `json:"fc"`
 	Domain string `json:"domain"`
 	Script string `json:"script"`
 	// WorkTime can be used to pre-generate POW strings
