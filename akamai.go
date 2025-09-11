@@ -18,19 +18,6 @@ func (s *Session) GenerateSensorData(ctx context.Context, input *SensorInput) (s
 	return response.Payload, response.Context, nil
 }
 
-// ParseV3Dynamic returns the dynamic values for a v3 dynamic script
-func (s *Session) ParseV3Dynamic(ctx context.Context, input *DynamicInput) (string, error) {
-	response, err := sendRequest[*DynamicInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/v3dynamic", input)
-	if err != nil {
-		return "", err
-	}
-	if response.Error != "" {
-		return "", fmt.Errorf("api returned with: %s", response.Error)
-	}
-
-	return response.Payload, nil
-}
-
 // GeneratePixelData returns the pixel data using the Hyper Solutions API.
 func (s *Session) GeneratePixelData(ctx context.Context, input *PixelInput) (string, error) {
 	response, err := sendRequest[*PixelInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/pixel", input)

@@ -605,10 +605,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV26(in *jlexer.Lexer
 			out.PageUrl = string(in.String())
 		case "userAgent":
 			out.UserAgent = string(in.String())
-		case "scriptHash":
-			out.ScriptHash = string(in.String())
-		case "dynamicValues":
-			out.DynamicValues = string(in.String())
+		case "script":
+			out.Script = string(in.String())
 		case "acceptLanguage":
 			out.AcceptLanguage = string(in.String())
 		case "ip":
@@ -655,14 +653,9 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV26(out *jwriter.Wri
 		out.String(string(in.UserAgent))
 	}
 	{
-		const prefix string = ",\"scriptHash\":"
+		const prefix string = ",\"script\":"
 		out.RawString(prefix)
-		out.String(string(in.ScriptHash))
-	}
-	{
-		const prefix string = ",\"dynamicValues\":"
-		out.RawString(prefix)
-		out.String(string(in.DynamicValues))
+		out.String(string(in.Script))
 	}
 	{
 		const prefix string = ",\"acceptLanguage\":"
@@ -1045,6 +1038,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV210(in *jlexer.Lexe
 			out.St = int(in.Int())
 		case "ct":
 			out.Ct = string(in.String())
+		case "fc":
+			out.Fc = string(in.String())
 		case "domain":
 			out.Domain = string(in.String())
 		case "script":
@@ -1082,6 +1077,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV210(out *jwriter.Wr
 		const prefix string = ",\"ct\":"
 		out.RawString(prefix)
 		out.String(string(in.Ct))
+	}
+	{
+		const prefix string = ",\"fc\":"
+		out.RawString(prefix)
+		out.String(string(in.Fc))
 	}
 	{
 		const prefix string = ",\"domain\":"
