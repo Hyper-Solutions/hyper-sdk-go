@@ -607,6 +607,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV26(in *jlexer.Lexer
 			out.UserAgent = string(in.String())
 		case "script":
 			out.Script = string(in.String())
+		case "scriptUrl":
+			out.ScriptUrl = string(in.String())
 		case "acceptLanguage":
 			out.AcceptLanguage = string(in.String())
 		case "ip":
@@ -656,6 +658,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV26(out *jwriter.Wri
 		const prefix string = ",\"script\":"
 		out.RawString(prefix)
 		out.String(string(in.Script))
+	}
+	{
+		const prefix string = ",\"scriptUrl\":"
+		out.RawString(prefix)
+		out.String(string(in.ScriptUrl))
 	}
 	{
 		const prefix string = ",\"acceptLanguage\":"

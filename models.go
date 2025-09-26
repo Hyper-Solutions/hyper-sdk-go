@@ -40,6 +40,9 @@ type SensorInput struct {
 	// 	Subsequent request should only include the Context.
 	Script string `json:"script"`
 
+	// ScriptUrl is the full URL where you are posting sensor data to
+	ScriptUrl string `json:"scriptUrl"`
+
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
 	Context        string `json:"context"`
