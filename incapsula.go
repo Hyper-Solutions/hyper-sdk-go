@@ -3,12 +3,11 @@ package hyper
 import (
 	"context"
 	"fmt"
-	"net/url"
 )
 
 // GenerateReese84Sensor returns the sensor data required to generate valid reese84 cookies using the Hyper Solutions API.
-func (s *Session) GenerateReese84Sensor(ctx context.Context, site string, input *ReeseInput) (string, error) {
-	response, err := sendRequest[*ReeseInput, *apiResponse](ctx, s, "https://incapsula.hypersolutions.co/reese84/"+url.PathEscape(site), input)
+func (s *Session) GenerateReese84Sensor(ctx context.Context, input *ReeseInput) (string, error) {
+	response, err := sendRequest[*ReeseInput, *apiResponse](ctx, s, "https://incapsula.hypersolutions.co/reese84", input)
 	if err != nil {
 		return "", err
 	}
