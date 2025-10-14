@@ -28,24 +28,25 @@ Before using this SDK, you'll need an API key from Hyper Solutions:
 package main
 
 import (
-    "context"
-    "fmt"
-    "github.com/Hyper-Solutions/hyper-sdk-go/v2"
+	"context"
+	"fmt"
+
+	"github.com/Hyper-Solutions/hyper-sdk-go/v2"
 )
 
 func main() {
-    session := hyper.NewSession("your-api-key")
-    
-    // Generate Akamai sensor data
-    sensorData, sensorContext, err := session.GenerateSensorData(context.Background(), &hyper.SensorInput{
-        // Configure your sensor input
-    })
-    if err != nil {
-        panic(err)
-    }
-    
-    fmt.Printf("Generated sensor data: %s", sensorData)
-    fmt.Printf("Sensor context: %s", sensorContext)
+	session := hyper.NewSession("your-api-key")
+
+	// Generate Akamai sensor data
+	sensorData, sensorContext, err := session.GenerateSensorData(context.Background(), &hyper.SensorInput{
+		// Configure your sensor input
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Generated sensor data: %s", sensorData)
+	fmt.Printf("Sensor context: %s", sensorContext)
 }
 ```
 
@@ -104,7 +105,7 @@ Bypass **Akamai Bot Manager** protection with sensor data generation, cookie val
 Generate sensor data for valid **Akamai cookies** and bot detection bypass:
 
 ```go
-sensorData, err := session.GenerateSensorData(ctx, &hyper.SensorInput{
+sensorData, sensorContext, err := session.GenerateSensorData(ctx, &hyper.SensorInput{
     // Configure sensor parameters
 })
 if err != nil {
