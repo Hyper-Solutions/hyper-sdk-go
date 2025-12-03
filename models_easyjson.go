@@ -1831,3 +1831,90 @@ func (v *DataDomeInterstitialInput) UnmarshalJSON(data []byte) error {
 func (v *DataDomeInterstitialInput) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV217(l, v)
 }
+func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV218(in *jlexer.Lexer, out *BotIDHeaderInput) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "script":
+			out.Script = string(in.String())
+		case "userAgent":
+			out.UserAgent = string(in.String())
+		case "ip":
+			out.IP = string(in.String())
+		case "acceptLanguage":
+			out.AcceptLanguage = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV218(out *jwriter.Writer, in BotIDHeaderInput) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"script\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Script))
+	}
+	{
+		const prefix string = ",\"userAgent\":"
+		out.RawString(prefix)
+		out.String(string(in.UserAgent))
+	}
+	{
+		const prefix string = ",\"ip\":"
+		out.RawString(prefix)
+		out.String(string(in.IP))
+	}
+	{
+		const prefix string = ",\"acceptLanguage\":"
+		out.RawString(prefix)
+		out.String(string(in.AcceptLanguage))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v BotIDHeaderInput) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV218(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v BotIDHeaderInput) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV218(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *BotIDHeaderInput) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV218(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *BotIDHeaderInput) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV218(l, v)
+}

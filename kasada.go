@@ -38,3 +38,17 @@ func (s *Session) GenerateKasadaPow(ctx context.Context, input *KasadaPowInput) 
 
 	return response.Payload, nil
 }
+
+// GenerateBotIDHeader returns the x-is-human header value
+func (s *Session) GenerateBotIDHeader(ctx context.Context, input *BotIDHeaderInput) (string, error) {
+	response, err := sendRequest[*BotIDHeaderInput, *apiResponse](ctx, s, "https://kasada.hypersolutions.co/botid", input)
+	if err != nil {
+		return "", err
+	}
+
+	if response.Error != "" {
+		return "", fmt.Errorf("api returned with: %s", response.Error)
+	}
+
+	return response.Payload, nil
+}

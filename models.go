@@ -118,6 +118,13 @@ type KasadaPowInput struct {
 	WorkTime *int `json:"workTime,omitempty"`
 }
 
+type BotIDHeaderInput struct {
+	Script         string `json:"script"`
+	UserAgent      string `json:"userAgent"`
+	IP             string `json:"ip"`
+	AcceptLanguage string `json:"acceptLanguage"`
+}
+
 type kasadaPayloadOutput struct {
 	Headers KasadaHeaders `json:"headers"`
 	Payload string        `json:"payload"`
