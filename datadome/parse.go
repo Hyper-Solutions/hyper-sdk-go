@@ -3,11 +3,12 @@ package datadome
 import (
 	"bytes"
 	"errors"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/justhyped/OrderedForm"
 	"io"
 	"regexp"
 	"strconv"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/justhyped/OrderedForm"
 )
 
 var (
@@ -47,6 +48,9 @@ func ParseInterstitialDeviceCheckLink(body io.Reader, datadomeCookie, referer st
 	form.Set("cid", datadomeCookie)
 	form.Set("referer", referer)
 	form.Set("s", strconv.FormatInt(d.S, 10))
+	if d.E != "" {
+		form.Set("e", d.E)
+	}
 	form.Set("b", strconv.FormatInt(d.B, 10))
 	form.Set("dm", "cd")
 
