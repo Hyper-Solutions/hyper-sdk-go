@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	reeseScriptRegex = regexp.MustCompile(`src\s*=\s*"((/[^/]+/\d+)(?:\?.*)?)"`)
+	reeseScriptRegex = regexp.MustCompile(`src\s*=\s*"((/[^/]+/[^/?"]+)\?s=[^"]*)"`)
 
 	ErrReeseScriptNotFound = errors.New("hyper: reese script not found")
 	ErrNotInterruptionPage = errors.New("hyper: not an interruption page")
