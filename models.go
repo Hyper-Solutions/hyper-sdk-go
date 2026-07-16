@@ -196,22 +196,3 @@ type DataDomeTagsInput struct {
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
 }
-
-type TrustDecisionPayloadInput struct {
-	UserAgent      string `json:"userAgent"`
-	AcceptLanguage string `json:"acceptLanguage"`
-	Ip             string `json:"ip"`
-	Script         string `json:"script"`
-	PageUrl        string `json:"pageUrl"`
-	FpUrl          string `json:"fpUrl"`
-}
-
-type TrustDecisionSigningInput struct {
-	ClientId string `json:"clientId"`
-	Path     string `json:"path"`
-}
-
-type TrustDecisionDecodeInput struct {
-	Result    string `json:"result"`
-	RequestId string `json:"requestId"`
-}
