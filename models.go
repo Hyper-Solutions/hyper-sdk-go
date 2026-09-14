@@ -163,7 +163,17 @@ type DataDomeSliderInput struct {
 	// https://dd.prod.captcha-delivery.com/image/2024-xx-xx/hash.frag.png
 	Piece string `json:"piece"`
 
-	ParentUrl      string `json:"parentUrl"`
+	ParentUrl string `json:"parentUrl"`
+
+	// Script is the DataDome challenge bundle. It is only needed when the
+	// challenge page loads the bundle with a <script defer src="..."> tag
+	// instead of inlining it, which DataDome does per request. Use
+	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
+	// URL with the same client and pass the response body here.
+	//
+	// Leave it empty when the page inlines the bundle.
+	Script string `json:"script"`
+
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
 }
@@ -178,6 +188,15 @@ type DataDomeInterstitialInput struct {
 
 	// Html is the response body of the GET request to the DeviceLink
 	Html string `json:"html"`
+
+	// Script is the DataDome challenge bundle. It is only needed when the
+	// challenge page loads the bundle with a <script defer src="..."> tag
+	// instead of inlining it, which DataDome does per request. Use
+	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
+	// URL with the same client and pass the response body here.
+	//
+	// Leave it empty when the page inlines the bundle.
+	Script string `json:"script"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
