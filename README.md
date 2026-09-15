@@ -295,6 +295,27 @@ if err != nil {
 }
 ```
 
+### Challenge Script Parsing
+
+DataDome serves some challenge pages with the bundle **inlined in the HTML** and others with it in **its own file**, switching between the two per request. When a page uses its own file, fetch it and pass it as `Script`:
+
+```go
+// After GET-ing the deviceLink and reading the body into html
+var script string
+if scriptURL, ok := datadome.ParseChallengeScriptURL(html); ok {
+    // GET scriptURL with the same client, proxy and headers, then read the body
+    script = scriptBody
+}
+
+payload, headers, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
+    // ... other parameters
+    Html:   html,
+    Script: script, // empty when the page inlines the bundle
+})
+```
+
+The same applies to `DataDomeSliderInput`. `Script` is optional and leaving it empty keeps working, but the payload is then built against a pinned script version instead of the one the page actually served.
+
 ### Getting Help
 
 - Check our [documentation](https://docs.hypersolutions.co/)
