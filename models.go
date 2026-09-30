@@ -91,6 +91,17 @@ type Headers struct {
 	Platform        string `json:"sec-ch-ua-platform"`
 	Model           string `json:"sec-ch-ua-model"`
 	FullVersionList string `json:"sec-ch-ua-full-version-list"`
+
+	Bitness              string `json:"sec-ch-ua-bitness"`
+	PlatformVersion      string `json:"sec-ch-ua-platform-version"`
+	FullVersion          string `json:"sec-ch-ua-full-version"`
+	Wow64                string `json:"sec-ch-ua-wow64"`
+	FormFactors          string `json:"sec-ch-ua-form-factors"`
+	DPR                  string `json:"sec-ch-dpr"`
+	ViewportWidth        string `json:"sec-ch-viewport-width"`
+	ViewportHeight       string `json:"sec-ch-viewport-height"`
+	PrefersColorScheme   string `json:"sec-ch-prefers-color-scheme"`
+	PrefersReducedMotion string `json:"sec-ch-prefers-reduced-motion"`
 }
 
 type KasadaPayloadInput struct {
