@@ -31,7 +31,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Hyper-Solutions/hyper-sdk-go/v2"
+	"github.com/Hyper-Solutions/hyper-sdk-go/v3"
 )
 
 func main() {
@@ -64,7 +64,7 @@ func main() {
 Install the Hyper Solutions SDK for Go using:
 
 ```bash
-go get github.com/Hyper-Solutions/hyper-sdk-go/v2
+go get github.com/Hyper-Solutions/hyper-sdk-go/v3
 ```
 
 ## 📋 Table of Contents

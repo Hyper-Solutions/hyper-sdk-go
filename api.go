@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Hyper-Solutions/hyper-sdk-go/v2/internal"
+	"github.com/Hyper-Solutions/hyper-sdk-go/v3/internal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/mailru/easyjson"
 	"github.com/mailru/easyjson/buffer"
