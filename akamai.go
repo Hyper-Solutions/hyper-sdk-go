@@ -31,15 +31,15 @@ func (s *Session) GeneratePixelData(ctx context.Context, input *PixelInput) (str
 	return response.Payload, nil
 }
 
-// GenerateSbsdData returns the sbsd payload using the Hyper Solutions API.
-func (s *Session) GenerateSbsdData(ctx context.Context, input *SbsdInput) (string, error) {
+// GenerateSbsdData returns the sbsd payload and context using the Hyper Solutions API.
+func (s *Session) GenerateSbsdData(ctx context.Context, input *SbsdInput) (string, string, error) {
 	response, err := sendRequest[*SbsdInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/sbsd", input)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	if response.Error != "" {
-		return "", fmt.Errorf("api returned with: %s", response.Error)
+		return "", "", fmt.Errorf("api returned with: %s", response.Error)
 	}
 
-	return response.Payload, nil
+	return response.Payload, response.Context, nil
 }

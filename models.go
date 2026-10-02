@@ -60,13 +60,18 @@ type PixelInput struct {
 type SbsdInput struct {
 	Index int `json:"index"`
 	// UserAgent must be a Chrome Windows User-Agent.
-	UserAgent      string `json:"userAgent"`
-	Uuid           string `json:"uuid"`
-	PageUrl        string `json:"pageUrl"`
-	OCookie        string `json:"o"`
-	Script         string `json:"script"`
+	UserAgent string `json:"userAgent"`
+	Uuid      string `json:"uuid"`
+	PageUrl   string `json:"pageUrl"`
+	OCookie   string `json:"o"`
+
+	// Script is mutually exclusive with [SbsdInput.Context], the first sbsd request should include the script field.
+	// 	Subsequent requests should only include the Context.
+	Script string `json:"script"`
+
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
+	Context        string `json:"context"`
 }
 
 type DynamicInput struct {
