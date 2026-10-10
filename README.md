@@ -133,7 +133,7 @@ if err != nil {
 
 ### SBSD
 
-Generate **SBSD** payloads. The first request of a session sends the script, later ones send the returned context:
+Generate **SBSD** payloads. The first request of a session sends the script, later ones send the returned context. A hard block (an SBSD POST with a `t` parameter) always sends the script with an empty context, never one from an earlier request:
 
 ```go
 res, err := session.GenerateSbsdData(ctx, &hyper.SbsdInput{

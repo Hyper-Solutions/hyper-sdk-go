@@ -58,7 +58,6 @@ type PixelInput struct {
 }
 
 type SbsdInput struct {
-	Index int `json:"index"`
 	// UserAgent must be a Chrome Windows User-Agent.
 	UserAgent string `json:"userAgent"`
 	Uuid      string `json:"uuid"`
@@ -67,6 +66,8 @@ type SbsdInput struct {
 
 	// Script is mutually exclusive with [SbsdInput.Context], the first sbsd request should include the script field.
 	// 	Subsequent requests should only include the Context.
+	// 	A hard block (an SBSD POST with a t parameter) always starts a new chain: send Script and an empty
+	// 	Context, never the Context from an earlier request.
 	Script string `json:"script"`
 
 	// ScriptUrl is the absolute src of the SBSD script tag, query included.
