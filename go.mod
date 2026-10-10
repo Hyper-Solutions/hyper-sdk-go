@@ -1,4 +1,4 @@
-module github.com/Hyper-Solutions/hyper-sdk-go/v3
+module github.com/Hyper-Solutions/hyper-sdk-go/v4
 
 go 1.22.0
 
