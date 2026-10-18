@@ -245,6 +245,19 @@ if err != nil {
 // Returns: /ips.js?timestamp=...
 ```
 
+### Mobile User-Agent Generation
+
+Generate the **Kasada mobile `user-agent`** value sent on the native app flow. The mobile SDK derives it as the lowercase hex MD5 of `"<osVersion> / <bundleID> <appVersion>"`:
+
+```go
+userAgent := kasada.GenerateUserAgent("18.0.1", "com.example.app", "9.15.0")
+// iOS:     osVersion = UIDevice.systemVersion, bundleID = CFBundleIdentifier
+// Android: osVersion = Build.VERSION.SDK_INT,  bundleID = package name
+// Returns: 7016adc4ba8d433533954ebad33be424
+```
+
+Available in `hyper-sdk-go` v3.1.0 and later.
+
 ## 🎯 DataDome Solutions
 
 Solve **DataDome captchas** including slider challenges and interstitial pages.
