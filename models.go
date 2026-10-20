@@ -58,7 +58,6 @@ type PixelInput struct {
 }
 
 type SbsdInput struct {
-	Index int `json:"index"`
 	// UserAgent must be a Chrome Windows User-Agent.
 	UserAgent string `json:"userAgent"`
 	Uuid      string `json:"uuid"`
@@ -67,7 +66,14 @@ type SbsdInput struct {
 
 	// Script is mutually exclusive with [SbsdInput.Context], the first sbsd request should include the script field.
 	// 	Subsequent requests should only include the Context.
+	// 	A hard block (an SBSD POST with a t parameter) always starts a new chain: send Script and an empty
+	// 	Context, never the Context from an earlier request.
 	Script string `json:"script"`
+
+	// ScriptUrl is the absolute src of the SBSD script tag, query included.
+	// Optional: when set, the fingerprint's resource-timing signal carries the
+	// script's own entry the way a browser's does.
+	ScriptUrl string `json:"scriptUrl,omitempty"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
@@ -80,34 +86,33 @@ type DynamicInput struct {
 }
 
 type apiResponse struct {
-	Payload  string   `json:"payload"`
-	Swhanedl string   `json:"swhanedl,omitempty"`
-	Context  string   `json:"context,omitempty"`
-	TimeZone string   `json:"timeZone,omitempty"`
-	ClientId string   `json:"clientId,omitempty"`
-	Headers  *Headers `json:"headers"`
-	Error    string   `json:"error"`
+	Payload  string      `json:"payload"`
+	Swhanedl string      `json:"swhanedl,omitempty"`
+	Context  string      `json:"context,omitempty"`
+	TimeZone string      `json:"timeZone,omitempty"`
+	ClientId string      `json:"clientId,omitempty"`
+	Headers  ClientHints `json:"headers"`
+	Error    string      `json:"error"`
 }
 
-type Headers struct {
-	DeviceMemory    string `json:"sec-ch-device-memory"`
-	Mobile          string `json:"sec-ch-ua-mobile"`
-	Arch            string `json:"sec-ch-ua-arch"`
-	Platform        string `json:"sec-ch-ua-platform"`
-	Model           string `json:"sec-ch-ua-model"`
-	FullVersionList string `json:"sec-ch-ua-full-version-list"`
-
-	Bitness              string `json:"sec-ch-ua-bitness"`
-	PlatformVersion      string `json:"sec-ch-ua-platform-version"`
-	FullVersion          string `json:"sec-ch-ua-full-version"`
-	Wow64                string `json:"sec-ch-ua-wow64"`
-	FormFactors          string `json:"sec-ch-ua-form-factors"`
-	DPR                  string `json:"sec-ch-dpr"`
-	ViewportWidth        string `json:"sec-ch-viewport-width"`
-	ViewportHeight       string `json:"sec-ch-viewport-height"`
-	PrefersColorScheme   string `json:"sec-ch-prefers-color-scheme"`
-	PrefersReducedMotion string `json:"sec-ch-prefers-reduced-motion"`
-}
+// ClientHints are the Accept-CH client hint headers for the device a payload
+// was generated for, keyed by lowercase header name, with values ready to send
+// verbatim (already serialized the way Chrome sends them; do not re-quote).
+//
+// The API returns every hint Chrome sends once a site opts in via Accept-CH:
+// sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, sec-ch-ua-arch,
+// sec-ch-ua-bitness, sec-ch-ua-model, sec-ch-ua-platform-version,
+// sec-ch-ua-full-version, sec-ch-ua-full-version-list, sec-ch-ua-wow64,
+// sec-ch-ua-form-factors, sec-ch-device-memory, sec-ch-dpr,
+// sec-ch-viewport-width, sec-ch-viewport-height, device-memory, dpr,
+// viewport-width, ect, rtt, downlink, sec-ch-prefers-color-scheme,
+// sec-ch-prefers-reduced-motion and sec-ch-prefers-reduced-transparency.
+// Send only the ones the target site asked for in its Accept-CH response
+// header; sending hints a site never requested is not what a browser does.
+//
+// Nil when the API returned none: Safari user agents, and payloads built by a
+// remote browser.
+type ClientHints map[string]string
 
 type KasadaPayloadInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
@@ -121,6 +126,12 @@ type KasadaPayloadInput struct {
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip,omitempty"`
+
+	// Strict refuses the payload instead of returning one built on a guess when
+	// the script has a signal the API cannot identify yet. The request then
+	// fails with "Unidentified signals in script; refusing payload because
+	// strict was set". Off by default: such a payload usually still works.
+	Strict bool `json:"strict,omitempty"`
 }
 
 type KasadaPowInput struct {
@@ -142,9 +153,10 @@ type BotIDHeaderInput struct {
 }
 
 type kasadaPayloadOutput struct {
-	Headers KasadaHeaders `json:"headers"`
-	Payload string        `json:"payload"`
-	Error   string        `json:"error"`
+	Headers     KasadaHeaders `json:"headers"`
+	ClientHints ClientHints   `json:"clientHints"`
+	Payload     string        `json:"payload"`
+	Error       string        `json:"error"`
 }
 
 type KasadaHeaders struct {
