@@ -13,6 +13,26 @@ type SensorResult struct {
 	ClientHints ClientHints
 }
 
+// TelemetryResult is returned by [Session.GenerateTelemetry].
+type TelemetryResult struct {
+	// Header is the ready-to-send value of the Akamai-BM-Telemetry header.
+	Header string
+	// Context must be sent back on the next telemetry request of the session.
+	Context string
+	// ClientHints are the Accept-CH headers for the device the header describes.
+	ClientHints ClientHints
+}
+
+// TelemetryParamsResult is returned by [Session.GetTelemetryParams].
+type TelemetryParamsResult struct {
+	// Path is the path of the site's get_params request, exactly as the browser
+	// requests it. Send a GET to it on the page's origin; the "j" in its JSON
+	// response goes into [TelemetryInput.J].
+	Path string
+	// Context can replace the script on the first [Session.GenerateTelemetry] request.
+	Context string
+}
+
 // PixelResult is returned by [Session.GeneratePixelData].
 type PixelResult struct {
 	// Payload is the pixel data to post.

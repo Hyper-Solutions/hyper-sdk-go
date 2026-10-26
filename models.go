@@ -48,6 +48,32 @@ type SensorInput struct {
 	Context        string `json:"context"`
 }
 
+// TelemetryInput is the input of [Session.GenerateTelemetry]: a sensor request for a site that sends an
+// Akamai-BM-Telemetry header on its protected API calls instead of posting sensor data.
+//
+// Only v3 dynamic scripts send the header, so [SensorInput.Version] may be left empty. Script and Context chain
+// across headers the same way they do across sensor posts.
+type TelemetryInput struct {
+	SensorInput
+
+	// J is the "j" from the response of the site's get_params request (see [Session.GetTelemetryParams]), sent
+	// as it was returned. Leave it empty when the site makes no get_params request.
+	J string `json:"j"`
+}
+
+// TelemetryParamsInput is the input of [Session.GetTelemetryParams].
+type TelemetryParamsInput struct {
+	// PageUrl is the page url that loaded the akamai script.
+	PageUrl string `json:"pageUrl"`
+
+	// Script is the akamai script, mutually exclusive with [TelemetryParamsInput.Context].
+	Script string `json:"script"`
+
+	// Context is a context returned by an earlier telemetry or telemetry params request, mutually exclusive with
+	// [TelemetryParamsInput.Script].
+	Context string `json:"context"`
+}
+
 type PixelInput struct {
 	// UserAgent must be a Chrome Windows User-Agent.
 	UserAgent      string `json:"userAgent"`

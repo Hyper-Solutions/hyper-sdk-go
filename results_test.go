@@ -16,9 +16,11 @@ import (
 type stubTransport struct {
 	body     string
 	lastBody string
+	lastURL  string
 }
 
 func (t *stubTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	t.lastURL = req.URL.String()
 	if req.Body != nil {
 		b, _ := io.ReadAll(req.Body)
 		t.lastBody = string(b)
@@ -75,6 +77,17 @@ func TestClientHintsReachTheResult(t *testing.T) {
 		res, err := s.GenerateSbsdData(ctx, &SbsdInput{})
 		if err != nil {
 			t.Fatal(err)
+		}
+		check(t, res.ClientHints)
+	})
+	t.Run("akamai telemetry", func(t *testing.T) {
+		s, _ := stubSession(body)
+		res, err := s.GenerateTelemetry(ctx, &TelemetryInput{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if res.Header != "p" || res.Context != "c" {
+			t.Errorf("header/context = %q/%q", res.Header, res.Context)
 		}
 		check(t, res.ClientHints)
 	})
@@ -140,6 +153,47 @@ func TestMissingClientHintsAreNil(t *testing.T) {
 	}
 	if res.ClientHints != nil {
 		t.Errorf("ClientHints = %v, want nil", res.ClientHints)
+	}
+}
+
+// The telemetry request is a flat sensor request plus "j", as /v1/telemetry
+// binds it, and the two telemetry methods call their own endpoints.
+func TestTelemetryWireAndEndpoints(t *testing.T) {
+	raw, err := easyjson.Marshal(&TelemetryInput{
+		SensorInput: SensorInput{Abck: "a", Bmsz: "b", PageUrl: "https://example.com/", Context: "ctx"},
+		J:           "AAQ%2f",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`"abck":"a"`, `"bmsz":"b"`, `"pageUrl":"https://example.com/"`, `"context":"ctx"`, `"j":"AAQ%2f"`} {
+		if !strings.Contains(string(raw), want) {
+			t.Errorf("%s missing from %s", want, raw)
+		}
+	}
+	if strings.Contains(string(raw), `"SensorInput"`) {
+		t.Errorf("SensorInput must be flattened, got %s", raw)
+	}
+
+	ctx := context.Background()
+	s, tr := stubSession(`{"payload":"p","context":"c"}`)
+	if _, err := s.GenerateTelemetry(ctx, &TelemetryInput{}); err != nil {
+		t.Fatal(err)
+	}
+	if tr.lastURL != "https://akm.hypersolutions.co/v1/telemetry" {
+		t.Errorf("GenerateTelemetry called %s", tr.lastURL)
+	}
+
+	s, tr = stubSession(`{"payload":"/_bm/get_params?type=web-jsto&v=aN+c/9=","context":"c"}`)
+	res, err := s.GetTelemetryParams(ctx, &TelemetryParamsInput{PageUrl: "https://example.com/", Script: "s"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tr.lastURL != "https://akm.hypersolutions.co/v1/telemetry/params" {
+		t.Errorf("GetTelemetryParams called %s", tr.lastURL)
+	}
+	if res.Path != "/_bm/get_params?type=web-jsto&v=aN+c/9=" || res.Context != "c" {
+		t.Errorf("path/context = %q/%q", res.Path, res.Context)
 	}
 }
 
