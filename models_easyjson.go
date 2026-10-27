@@ -1592,6 +1592,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV414(in *jlexer.Lexe
 			out.ParentUrl = string(in.String())
 		case "script":
 			out.Script = string(in.String())
+		case "scriptHash":
+			out.ScriptHash = string(in.String())
 		case "acceptLanguage":
 			out.AcceptLanguage = string(in.String())
 		case "ip":
@@ -1644,6 +1646,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV414(out *jwriter.Wr
 		const prefix string = ",\"script\":"
 		out.RawString(prefix)
 		out.String(string(in.Script))
+	}
+	if in.ScriptHash != "" {
+		const prefix string = ",\"scriptHash\":"
+		out.RawString(prefix)
+		out.String(string(in.ScriptHash))
 	}
 	{
 		const prefix string = ",\"acceptLanguage\":"
@@ -1708,6 +1715,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV415(in *jlexer.Lexe
 			out.Html = string(in.String())
 		case "script":
 			out.Script = string(in.String())
+		case "scriptHash":
+			out.ScriptHash = string(in.String())
 		case "acceptLanguage":
 			out.AcceptLanguage = string(in.String())
 		case "ip":
@@ -1745,6 +1754,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV415(out *jwriter.Wr
 		const prefix string = ",\"script\":"
 		out.RawString(prefix)
 		out.String(string(in.Script))
+	}
+	if in.ScriptHash != "" {
+		const prefix string = ",\"scriptHash\":"
+		out.RawString(prefix)
+		out.String(string(in.ScriptHash))
 	}
 	{
 		const prefix string = ",\"acceptLanguage\":"

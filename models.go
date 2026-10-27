@@ -219,14 +219,19 @@ type DataDomeSliderInput struct {
 
 	ParentUrl string `json:"parentUrl"`
 
-	// Script is the DataDome challenge bundle. It is only needed when the
-	// challenge page loads the bundle with a <script defer src="..."> tag
-	// instead of inlining it, which DataDome does per request. Use
-	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
-	// URL with the same client and pass the response body here.
+	// Script is the DataDome challenge bundle the page loads with a
+	// <script defer src="..."> tag. Use datadome.ParseChallengeScriptURL on the
+	// Html to find its URL, then GET that URL with the same client and pass the
+	// response body here.
 	//
-	// Leave it empty when the page inlines the bundle.
+	// Always set it. Once the API has accepted a bundle, the session sends its
+	// ScriptHash instead, and resends the bundle if the API asks for it.
 	Script string `json:"script"`
+
+	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The
+	// session fills it in; set it yourself only to send a hash without the
+	// bundle, in which case an unknown hash returns ErrScriptRequired.
+	ScriptHash string `json:"scriptHash,omitempty"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
@@ -243,14 +248,19 @@ type DataDomeInterstitialInput struct {
 	// Html is the response body of the GET request to the DeviceLink
 	Html string `json:"html"`
 
-	// Script is the DataDome challenge bundle. It is only needed when the
-	// challenge page loads the bundle with a <script defer src="..."> tag
-	// instead of inlining it, which DataDome does per request. Use
-	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
-	// URL with the same client and pass the response body here.
+	// Script is the DataDome challenge bundle the page loads with a
+	// <script defer src="..."> tag. Use datadome.ParseChallengeScriptURL on the
+	// Html to find its URL, then GET that URL with the same client and pass the
+	// response body here.
 	//
-	// Leave it empty when the page inlines the bundle.
+	// Always set it. Once the API has accepted a bundle, the session sends its
+	// ScriptHash instead, and resends the bundle if the API asks for it.
 	Script string `json:"script"`
+
+	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The
+	// session fills it in; set it yourself only to send a hash without the
+	// bundle, in which case an unknown hash returns ErrScriptRequired.
+	ScriptHash string `json:"scriptHash,omitempty"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
