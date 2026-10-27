@@ -17,7 +17,8 @@ import (
 var (
 	zstdDecoderPool = sync.Pool{
 		New: func() interface{} {
-			decoder, err := zstd.NewReader(nil)
+			// Only DecodeAll is used, which runs on the caller's goroutine.
+			decoder, err := zstd.NewReader(nil, zstd.WithDecoderConcurrency(1))
 			if err != nil {
 				panic(err)
 			}
@@ -32,33 +33,91 @@ var (
 	}
 )
 
-// DecompressResponse decompresses the response body based on Content-Encoding header
-func DecompressResponse(resp *http.Response) ([]byte, error) {
+// DecompressResponse decompresses the response body based on Content-Encoding
+// header. The body can be held in pooled buffers: release returns them, and
+// the bytes must not be used after it is called.
+func DecompressResponse(resp *http.Response) (body []byte, release func(), err error) {
+	release = func() {}
 	if resp == nil || resp.Body == nil {
-		return nil, nil
+		return nil, release, nil
 	}
 
 	encoding := strings.ToLower(resp.Header.Get("Content-Encoding"))
-	if encoding == "" {
-		return io.ReadAll(resp.Body)
-	}
-
 	switch {
 	case strings.Contains(encoding, "gzip"):
-		return handleGzip(resp.Body)
+		dst := getBuffer(-1)
+		body, err = handleGzip(resp.Body, dst)
+		return body, func() { putBuffer(dst) }, err
 	case strings.Contains(encoding, "zstd"):
-		return handleZstd(resp.Body)
+		// The compressed body is read once into a pooled buffer and decoded
+		// with DecodeAll into another.
+		src := getBuffer(resp.ContentLength)
+		defer putBuffer(src)
+		compressed, err := readInto(src, resp.Body)
+		if err != nil {
+			return nil, release, err
+		}
+		dst := getBuffer(-1)
+		body, err = handleZstd(compressed, dst)
+		return body, func() { putBuffer(dst) }, err
 	case strings.Contains(encoding, "br"):
-		return handleBrotli(resp.Body)
+		body, err = handleBrotli(resp.Body)
+		return body, release, err
 	case strings.Contains(encoding, "deflate"):
-		return handleDeflate(resp.Body)
+		body, err = handleDeflate(resp.Body)
+		return body, release, err
 	default:
-		// Unknown encoding, try to read as-is
-		return io.ReadAll(resp.Body)
+		// No or unknown encoding, read as-is
+		dst := getBuffer(resp.ContentLength)
+		body, err = readInto(dst, resp.Body)
+		return body, func() { putBuffer(dst) }, err
 	}
 }
 
-func handleGzip(body io.ReadCloser) ([]byte, error) {
+// maxPooledBuffer keeps a rare huge body from pinning its buffer in the pool.
+const maxPooledBuffer = 8 << 20
+
+var bufferPool = sync.Pool{New: func() any { return new([]byte) }}
+
+// getBuffer returns a pooled buffer with room for at least size bytes.
+func getBuffer(size int64) *[]byte {
+	buf := bufferPool.Get().(*[]byte)
+	// The extra room lets the read that reports EOF land without growing.
+	if size > 0 && size <= maxPooledBuffer && int64(cap(*buf)) < size+bytes.MinRead {
+		*buf = make([]byte, 0, size+bytes.MinRead)
+	}
+	*buf = (*buf)[:0]
+	return buf
+}
+
+func putBuffer(buf *[]byte) {
+	if cap(*buf) > maxPooledBuffer {
+		return
+	}
+	bufferPool.Put(buf)
+}
+
+// readInto reads r to EOF into buf, growing it as needed, and returns the
+// bytes read. buf keeps the grown slice for the pool.
+func readInto(buf *[]byte, r io.Reader) ([]byte, error) {
+	b := (*buf)[:0]
+	for {
+		if len(b) == cap(b) {
+			b = append(b, 0)[:len(b)]
+		}
+		n, err := r.Read(b[len(b):cap(b)])
+		b = b[:len(b)+n]
+		if err != nil {
+			*buf = b
+			if err == io.EOF {
+				return b, nil
+			}
+			return b, err
+		}
+	}
+}
+
+func handleGzip(body io.Reader, dst *[]byte) ([]byte, error) {
 	reader := gzipDecoderPool.Get().(*gzip.Reader)
 	defer gzipDecoderPool.Put(reader)
 
@@ -67,15 +126,18 @@ func handleGzip(body io.ReadCloser) ([]byte, error) {
 	}
 	defer reader.Close()
 
-	return io.ReadAll(reader)
+	return readInto(dst, reader)
 }
 
-func handleZstd(body io.ReadCloser) ([]byte, error) {
+func handleZstd(compressed []byte, dst *[]byte) ([]byte, error) {
 	decoder := zstdDecoderPool.Get().(*zstd.Decoder)
 	defer zstdDecoderPool.Put(decoder)
 
-	decoder.Reset(body)
-	return io.ReadAll(decoder)
+	body, err := decoder.DecodeAll(compressed, (*dst)[:0])
+	if cap(body) <= maxPooledBuffer {
+		*dst = body[:0]
+	}
+	return body, err
 }
 
 func handleBrotli(body io.ReadCloser) ([]byte, error) {

@@ -1,38 +1,23 @@
 package internal
 
 import (
-	"bytes"
-	"fmt"
+	"runtime"
+
 	"github.com/klauspost/compress/zstd"
-	"sync"
 )
 
-var zstdEncoderPool = sync.Pool{
-	New: func() interface{} {
-		encoder, err := zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedDefault))
-		if err != nil {
-			panic(fmt.Sprintf("failed to create zstd encoder: %v", err))
-		}
-		return encoder
-	},
-}
+// zstdEncoder compresses every request with EncodeAll, which is safe for
+// concurrent use and keeps its block encoders for the life of the process, so
+// a request does not pay for setting up an encoder.
+var zstdEncoder = func() *zstd.Encoder {
+	encoder, err := zstd.NewWriter(nil, zstd.WithEncoderConcurrency(min(runtime.GOMAXPROCS(0), 8)), zstd.WithWindowSize(1<<18))
+	if err != nil {
+		panic(err)
+	}
+	return encoder
+}()
 
+// CompressZstd compresses data as one zstd frame.
 func CompressZstd(data []byte) ([]byte, error) {
-	encoderInterface := zstdEncoderPool.Get()
-	encoder := encoderInterface.(*zstd.Encoder)
-	defer zstdEncoderPool.Put(encoder)
-
-	var buf bytes.Buffer
-
-	encoder.Reset(&buf)
-
-	if _, err := encoder.Write(data); err != nil {
-		return nil, err
-	}
-
-	if err := encoder.Close(); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
+	return zstdEncoder.EncodeAll(data, make([]byte, 0, len(data)/4)), nil
 }

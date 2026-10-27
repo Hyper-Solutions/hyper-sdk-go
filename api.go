@@ -87,7 +87,8 @@ func sendRequestStatus[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context
 	}
 	defer resp.Body.Close()
 
-	respBody, err := internal.DecompressResponse(resp)
+	respBody, release, err := internal.DecompressResponse(resp)
+	defer release()
 	if err != nil {
 		return response, resp.StatusCode, err
 	}

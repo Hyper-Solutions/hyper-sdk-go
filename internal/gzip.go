@@ -3,18 +3,22 @@ package internal
 import (
 	"bytes"
 	"fmt"
+	"sync"
 
 	"github.com/klauspost/compress/gzip"
 )
 
+var gzipWriterPool = sync.Pool{New: func() any { return gzip.NewWriter(nil) }}
+
 // CompressGzip compresses data using gzip
 func CompressGzip(data []byte) ([]byte, error) {
-	var buf bytes.Buffer
+	buf := bytes.NewBuffer(make([]byte, 0, len(data)/4))
 
-	gzWriter := gzip.NewWriter(&buf)
+	gzWriter := gzipWriterPool.Get().(*gzip.Writer)
+	defer gzipWriterPool.Put(gzWriter)
+	gzWriter.Reset(buf)
 
 	if _, err := gzWriter.Write(data); err != nil {
-		gzWriter.Close()
 		return nil, fmt.Errorf("failed to write to gzip writer: %w", err)
 	}
 
