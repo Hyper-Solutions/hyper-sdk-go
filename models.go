@@ -16,7 +16,9 @@ type ReeseInput struct {
 	ScriptUrl      string `json:"scriptUrl"`
 	PageUrl        string `json:"pageUrl"`
 	Pow            string `json:"pow"`
-	Script         string `json:"script"`
+	// Script is the reese84 script. The session sends only its sha256, and
+	// sends the script itself when the API answers that it has not seen it yet.
+	Script string `json:"script"`
 }
 
 type SensorInput struct {
@@ -38,6 +40,8 @@ type SensorInput struct {
 
 	// Script is mutually exclusive with [SensorInput.Context], the first sensor request should include the script field.
 	// 	Subsequent request should only include the Context.
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptUrl is the full URL where you are posting sensor data to
@@ -67,6 +71,8 @@ type TelemetryParamsInput struct {
 	PageUrl string `json:"pageUrl"`
 
 	// Script is the akamai script, mutually exclusive with [TelemetryParamsInput.Context].
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// Context is a context returned by an earlier telemetry or telemetry params request, mutually exclusive with
@@ -94,6 +100,8 @@ type SbsdInput struct {
 	// 	Subsequent requests should only include the Context.
 	// 	A hard block (an SBSD POST with a t parameter) always starts a new chain: send Script and an empty
 	// 	Context, never the Context from an earlier request.
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptUrl is the absolute src of the SBSD script tag, query included.
@@ -171,6 +179,15 @@ type KasadaPowInput struct {
 	WorkTime *int `json:"workTime,omitempty"`
 }
 
+// KasadaVersionInput is the [Session.GetKasadaVersion] request.
+type KasadaVersionInput struct {
+	// PageUrl is the URL of the page that loaded p.js.
+	PageUrl string `json:"pageUrl"`
+
+	// Script is the p.js script.
+	Script string `json:"script"`
+}
+
 type BotIDHeaderInput struct {
 	Script         string `json:"script"`
 	UserAgent      string `json:"userAgent"`
@@ -219,13 +236,13 @@ type DataDomeSliderInput struct {
 
 	ParentUrl string `json:"parentUrl"`
 
-	// Script is the DataDome challenge bundle. It is only needed when the
-	// challenge page loads the bundle with a <script defer src="..."> tag
-	// instead of inlining it, which DataDome does per request. Use
-	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
-	// URL with the same client and pass the response body here.
+	// Script is the DataDome challenge bundle the page loads with a
+	// <script defer src="..."> tag. Use datadome.ParseChallengeScriptURL on the
+	// Html to find its URL, then GET that URL with the same client and pass the
+	// response body here.
 	//
-	// Leave it empty when the page inlines the bundle.
+	// It is required. The session sends only the bundle's sha256, and sends
+	// the bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
@@ -243,13 +260,13 @@ type DataDomeInterstitialInput struct {
 	// Html is the response body of the GET request to the DeviceLink
 	Html string `json:"html"`
 
-	// Script is the DataDome challenge bundle. It is only needed when the
-	// challenge page loads the bundle with a <script defer src="..."> tag
-	// instead of inlining it, which DataDome does per request. Use
-	// datadome.ParseChallengeScriptURL on the Html to find out, then GET that
-	// URL with the same client and pass the response body here.
+	// Script is the DataDome challenge bundle the page loads with a
+	// <script defer src="..."> tag. Use datadome.ParseChallengeScriptURL on the
+	// Html to find its URL, then GET that URL with the same client and pass the
+	// response body here.
 	//
-	// Leave it empty when the page inlines the bundle.
+	// It is required. The session sends only the bundle's sha256, and sends
+	// the bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
 
 	AcceptLanguage string `json:"acceptLanguage"`

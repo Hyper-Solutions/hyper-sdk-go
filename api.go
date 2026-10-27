@@ -14,8 +14,15 @@ import (
 )
 
 func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Context, s *Session, url string, input V) (response T, err error) {
+	response, _, err = sendRequestStatus[V, T](ctx, s, url, input)
+	return response, err
+}
+
+// sendRequestStatus is sendRequest that also returns the response's status
+// code, for the callers that act on it.
+func sendRequestStatus[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Context, s *Session, url string, input V) (response T, status int, err error) {
 	if s.ApiKey == "" {
-		return response, errors.New("missing api key")
+		return response, 0, errors.New("missing api key")
 	}
 
 	w := jwriter.Writer{
@@ -28,7 +35,7 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 	input.MarshalEasyJSON(&w)
 
 	if w.Error != nil {
-		return response, w.Error
+		return response, 0, w.Error
 	}
 	payload := w.Buffer.BuildBytes()
 
@@ -37,7 +44,7 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 	if len(payload) > 1000 {
 		compressedPayload, err := compressPayload(payload, s.Compression)
 		if err != nil {
-			return response, fmt.Errorf("failed to compress request body with %s: %w", s.Compression, err)
+			return response, 0, fmt.Errorf("failed to compress request body with %s: %w", s.Compression, err)
 		}
 		payload = compressedPayload
 		useCompression = true
@@ -45,7 +52,7 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
 	if err != nil {
-		return response, err
+		return response, 0, err
 	}
 
 	req.Header.Set("content-type", "application/json")
@@ -60,7 +67,7 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 	if s.JwtKey != nil {
 		signature, err := generateSignature(s.ApiKey, s.JwtKey)
 		if err != nil {
-			return response, err
+			return response, 0, err
 		}
 		req.Header.Set("x-signature", signature)
 	}
@@ -68,7 +75,7 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 	if s.AppSecret != nil {
 		signature, err := generateSignature(s.AppKey, s.AppSecret)
 		if err != nil {
-			return response, err
+			return response, 0, err
 		}
 		req.Header.Set("x-app-signature", signature)
 		req.Header.Set("x-app-key", s.AppKey)
@@ -76,20 +83,21 @@ func sendRequest[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context.Conte
 
 	resp, err := s.Client.Do(req)
 	if err != nil {
-		return response, err
+		return response, 0, err
 	}
 	defer resp.Body.Close()
 
-	respBody, err := internal.DecompressResponse(resp)
+	respBody, release, err := internal.DecompressResponse(resp)
+	defer release()
 	if err != nil {
-		return response, err
+		return response, resp.StatusCode, err
 	}
 
 	if err := jsoniter.Unmarshal(respBody, &response); err != nil {
-		return response, err
+		return response, resp.StatusCode, err
 	}
 
-	return response, nil
+	return response, resp.StatusCode, nil
 }
 
 // compressPayload compresses the payload using the specified compression algorithm
