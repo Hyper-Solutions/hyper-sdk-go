@@ -16,7 +16,9 @@ type ReeseInput struct {
 	ScriptUrl      string `json:"scriptUrl"`
 	PageUrl        string `json:"pageUrl"`
 	Pow            string `json:"pow"`
-	Script         string `json:"script"`
+	// Script is the reese84 script. The session sends only its sha256, and
+	// sends the script itself when the API answers that it has not seen it yet.
+	Script string `json:"script"`
 }
 
 type SensorInput struct {

@@ -119,6 +119,10 @@ func TestSendsScriptHashFirst(t *testing.T) {
 			_, err := s.GetTelemetryParams(ctx, &TelemetryParamsInput{PageUrl: "https://example.com/", Script: bundle})
 			return err
 		},
+		"incapsula reese84": func(s *Session) error {
+			_, err := s.GenerateReese84Sensor(ctx, &ReeseInput{PageUrl: "https://example.com/", Script: bundle})
+			return err
+		},
 		"akamai sbsd": func(s *Session) error {
 			_, err := s.GenerateSbsdData(ctx, &SbsdInput{Uuid: "u", Script: bundle})
 			return err
