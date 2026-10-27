@@ -38,6 +38,8 @@ type SensorInput struct {
 
 	// Script is mutually exclusive with [SensorInput.Context], the first sensor request should include the script field.
 	// 	Subsequent request should only include the Context.
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptUrl is the full URL where you are posting sensor data to
@@ -67,6 +69,8 @@ type TelemetryParamsInput struct {
 	PageUrl string `json:"pageUrl"`
 
 	// Script is the akamai script, mutually exclusive with [TelemetryParamsInput.Context].
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// Context is a context returned by an earlier telemetry or telemetry params request, mutually exclusive with
@@ -94,6 +98,8 @@ type SbsdInput struct {
 	// 	Subsequent requests should only include the Context.
 	// 	A hard block (an SBSD POST with a t parameter) always starts a new chain: send Script and an empty
 	// 	Context, never the Context from an earlier request.
+	// 	The session sends only the script's sha256, and sends the script itself when the API answers that it has
+	// 	not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptUrl is the absolute src of the SBSD script tag, query included.

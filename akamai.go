@@ -8,7 +8,11 @@ import (
 // GenerateSensorData returns the sensor data required to generate valid akamai cookies using the Hyper Solutions API,
 // the context for the next sensor request, and the Accept-CH client hints for the device.
 func (s *Session) GenerateSensorData(ctx context.Context, input *SensorInput) (*SensorResult, error) {
-	response, err := sendRequest[*SensorInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/v2/sensor", input)
+	response, err := sendScriptRequest(ctx, s, "https://akm.hypersolutions.co/v2/sensor", input, input.Script, func() *SensorInput {
+		withoutScript := *input
+		withoutScript.Script = ""
+		return &withoutScript
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +27,11 @@ func (s *Session) GenerateSensorData(ctx context.Context, input *SensorInput) (*
 // the context for the next telemetry request, and the Accept-CH client hints for the device, using the Hyper
 // Solutions API. Each protected call takes a fresh header built from the previous call's context.
 func (s *Session) GenerateTelemetry(ctx context.Context, input *TelemetryInput) (*TelemetryResult, error) {
-	response, err := sendRequest[*TelemetryInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/v1/telemetry", input)
+	response, err := sendScriptRequest(ctx, s, "https://akm.hypersolutions.co/v1/telemetry", input, input.Script, func() *TelemetryInput {
+		withoutScript := *input
+		withoutScript.Script = ""
+		return &withoutScript
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +46,11 @@ func (s *Session) GenerateTelemetry(ctx context.Context, input *TelemetryInput) 
 // [TelemetryInput.J], and a context that can replace the script on the first telemetry request, using the Hyper
 // Solutions API.
 func (s *Session) GetTelemetryParams(ctx context.Context, input *TelemetryParamsInput) (*TelemetryParamsResult, error) {
-	response, err := sendRequest[*TelemetryParamsInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/v1/telemetry/params", input)
+	response, err := sendScriptRequest(ctx, s, "https://akm.hypersolutions.co/v1/telemetry/params", input, input.Script, func() *TelemetryParamsInput {
+		withoutScript := *input
+		withoutScript.Script = ""
+		return &withoutScript
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +77,11 @@ func (s *Session) GeneratePixelData(ctx context.Context, input *PixelInput) (*Pi
 // GenerateSbsdData returns the sbsd payload, the context for the next sbsd request, and the Accept-CH client hints
 // for the device, using the Hyper Solutions API.
 func (s *Session) GenerateSbsdData(ctx context.Context, input *SbsdInput) (*SbsdResult, error) {
-	response, err := sendRequest[*SbsdInput, *apiResponse](ctx, s, "https://akm.hypersolutions.co/sbsd", input)
+	response, err := sendScriptRequest(ctx, s, "https://akm.hypersolutions.co/sbsd", input, input.Script, func() *SbsdInput {
+		withoutScript := *input
+		withoutScript.Script = ""
+		return &withoutScript
+	})
 	if err != nil {
 		return nil, err
 	}

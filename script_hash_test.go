@@ -13,8 +13,8 @@ import (
 )
 
 // fakeScriptAPI answers like the API: it stores the scripts it is sent, solves
-// a request that names a stored script by hash, and answers 422
-// script_required for one it does not know.
+// a request that names a stored script by hash or carries neither (a context
+// request), and answers 422 script_required for a hash it does not know.
 type fakeScriptAPI struct {
 	mu       sync.Mutex
 	known    map[string]bool
@@ -30,8 +30,12 @@ func (f *fakeScriptAPI) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func (f *fakeScriptAPI) serve(w http.ResponseWriter, req *http.Request) {
 	body, _ := io.ReadAll(req.Body)
-	var in map[string]string
-	_ = json.Unmarshal(body, &in)
+	var raw map[string]any
+	_ = json.Unmarshal(body, &raw)
+	in := map[string]string{}
+	for _, k := range []string{"script", "scriptHash"} {
+		in[k], _ = raw[k].(string)
+	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -43,7 +47,7 @@ func (f *fakeScriptAPI) serve(w http.ResponseWriter, req *http.Request) {
 	case in["script"] != "":
 		f.known[scriptHash(in["script"])] = true
 		_, _ = w.Write([]byte(`{"payload":"solved"}`))
-	case f.known[in["scriptHash"]]:
+	case in["scriptHash"] == "" || f.known[in["scriptHash"]]:
 		_, _ = w.Write([]byte(`{"payload":"solved"}`))
 	default:
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -98,11 +102,27 @@ func TestScriptHashIsSha256Hex(t *testing.T) {
 	}
 }
 
-func TestDataDomeSendsScriptHashFirst(t *testing.T) {
+func TestSendsScriptHashFirst(t *testing.T) {
 	ctx := context.Background()
-	const bundle = "/* DataDome v1.36.0 */ !function(){}();"
+	const bundle = "/* challenge script */ !function(){}();"
 
 	for name, call := range map[string]func(*Session) error{
+		"akamai sensor": func(s *Session) error {
+			_, err := s.GenerateSensorData(ctx, &SensorInput{Version: "3", Script: bundle})
+			return err
+		},
+		"akamai telemetry": func(s *Session) error {
+			_, err := s.GenerateTelemetry(ctx, &TelemetryInput{SensorInput: SensorInput{Script: bundle}, J: "j"})
+			return err
+		},
+		"akamai telemetry params": func(s *Session) error {
+			_, err := s.GetTelemetryParams(ctx, &TelemetryParamsInput{PageUrl: "https://example.com/", Script: bundle})
+			return err
+		},
+		"akamai sbsd": func(s *Session) error {
+			_, err := s.GenerateSbsdData(ctx, &SbsdInput{Uuid: "u", Script: bundle})
+			return err
+		},
 		"interstitial": func(s *Session) error {
 			_, err := s.GenerateDataDomeInterstitial(ctx, &DataDomeInterstitialInput{Html: "<html/>", Script: bundle})
 			return err
@@ -183,5 +203,17 @@ func TestWithScriptHashWire(t *testing.T) {
 		if got[k] != v {
 			t.Errorf("%s = %q, want %q (body %s)", k, got[k], v, raw)
 		}
+	}
+}
+
+// TestContextRequestsCarryNoScript checks that a request chained with a
+// context, which has no script, is sent as is.
+func TestContextRequestsCarryNoScript(t *testing.T) {
+	s, api := newFakeScriptSession()
+	if _, err := s.GenerateSensorData(context.Background(), &SensorInput{Version: "3", Context: "ctx"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := api.sent(); !equal(got, []string{""}) {
+		t.Fatalf("sent %v, want one request with neither script nor hash", got)
 	}
 }
