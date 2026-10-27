@@ -1,3 +1,4 @@
+// Deprecated: use github.com/Hyper-Solutions/hyper-sdk-go/v4 instead.
 module github.com/Hyper-Solutions/hyper-sdk-go/v3
 
 go 1.22.0
