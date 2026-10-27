@@ -31,24 +31,41 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Hyper-Solutions/hyper-sdk-go/v3"
+	"github.com/Hyper-Solutions/hyper-sdk-go/v4"
 )
 
 func main() {
 	session := hyper.NewSession("your-api-key")
 
 	// Generate Akamai sensor data
-	sensorData, sensorContext, err := session.GenerateSensorData(context.Background(), &hyper.SensorInput{
+	res, err := session.GenerateSensorData(context.Background(), &hyper.SensorInput{
 		// Configure your sensor input
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Generated sensor data: %s", sensorData)
-	fmt.Printf("Sensor context: %s", sensorContext)
+	fmt.Printf("Generated sensor data: %s", res.Payload)
+	fmt.Printf("Sensor context: %s", res.Context)
 }
 ```
+
+Every `Generate*` method returns a result struct (`*hyper.SensorResult`, `*hyper.SbsdResult`, ...), so fields the API adds later arrive without breaking your code.
+
+### Client hints (Accept-CH)
+
+Sensor, SBSD, Reese84, Kasada payload and DataDome results carry `ClientHints`: the `sec-ch-*`, `device-memory`, `dpr`, `viewport-width`, `ect`, `rtt` and `downlink` headers for the device the payload was generated for, keyed by lowercase header name and ready to send verbatim. Send only the ones the site asked for in its `Accept-CH` response header:
+
+```go
+for _, name := range strings.Split(resp.Header.Get("Accept-CH"), ",") {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if value, ok := res.ClientHints[name]; ok {
+		req.Header.Set(name, value)
+	}
+}
+```
+
+`ClientHints` is nil when the API returns none (Safari user agents, and payloads built by a remote browser).
 
 ## ✨ Features
 
@@ -64,7 +81,7 @@ func main() {
 Install the Hyper Solutions SDK for Go using:
 
 ```bash
-go get github.com/Hyper-Solutions/hyper-sdk-go/v3
+go get github.com/Hyper-Solutions/hyper-sdk-go/v4
 ```
 
 ## 📋 Table of Contents
@@ -105,12 +122,29 @@ Bypass **Akamai Bot Manager** protection with sensor data generation, cookie val
 Generate sensor data for valid **Akamai cookies** and bot detection bypass:
 
 ```go
-sensorData, sensorContext, err := session.GenerateSensorData(ctx, &hyper.SensorInput{
+res, err := session.GenerateSensorData(ctx, &hyper.SensorInput{
     // Configure sensor parameters
 })
 if err != nil {
     // Handle error
 }
+// res.Payload is the sensor data, res.Context goes into the next SensorInput
+```
+
+### SBSD
+
+Generate **SBSD** payloads. The first request of a session sends the script, later ones send the returned context. A hard block (an SBSD POST with a `t` parameter) always sends the script with an empty context, never one from an earlier request:
+
+```go
+res, err := session.GenerateSbsdData(ctx, &hyper.SbsdInput{
+    // ... other parameters
+    Script:    script,
+    ScriptUrl: scriptUrl, // optional: absolute src of the SBSD script tag, query included
+})
+if err != nil {
+    // Handle error
+}
+// POST res.Payload; pass res.Context in the next SbsdInput instead of Script
 ```
 
 ### Parsing Script Path
@@ -146,9 +180,10 @@ Validate **Akamai _abck cookies** and session states:
 Handle **Akamai pixel challenges** for advanced bot detection bypass:
 
 ```go
-pixelData, err := session.GeneratePixelData(ctx, &hyper.PixelInput{
+res, err := session.GeneratePixelData(ctx, &hyper.PixelInput{
     // Pixel challenge parameters
 })
+// res.Payload is the pixel data
 if err != nil {
     // Handle error
 }
@@ -168,7 +203,10 @@ Bypass **Incapsula bot detection** with Reese84 sensors and UTMVC cookie generat
 Create **Reese84 sensor data** for Incapsula bypass:
 
 ```go
-sensorData, err := session.GenerateReese84Sensor(ctx, site, userAgent)
+res, err := session.GenerateReese84Sensor(ctx, &hyper.ReeseInput{
+    // Reese84 parameters
+})
+// res.Payload is the sensor, res.ClientHints the Accept-CH headers
 if err != nil {
     // Handle error
 }
@@ -179,11 +217,12 @@ if err != nil {
 Generate **UTMVC cookies** for Incapsula protection bypass:
 
 ```go
-utmvcCookie, err := session.GenerateUtmvcCookie(ctx, &hyper.UtmvcInput{
+res, err := session.GenerateUtmvcCookie(ctx, &hyper.UtmvcInput{
     Script: "incapsula-script-content",
     SessionIds: []string{"session-id-1", "session-id-2"},
-    UserAgent: "Mozilla/5.0 (compatible bot)"
+    UserAgent: "Mozilla/5.0 (compatible bot)",
 })
+// res.Payload is the ___utmvc cookie, res.Swhanedl the swhanedl value
 if err != nil {
     // Handle error
 }
@@ -212,9 +251,15 @@ Defeat **Kasada Bot Manager** with payload generation and POW solving.
 Create **x-kpsdk-ct tokens** for Kasada bypass:
 
 ```go
-payload, headers, err := session.GenerateKasadaPayload(ctx, &hyper.KasadaPayloadInput{
+res, err := session.GenerateKasadaPayload(ctx, &hyper.KasadaPayloadInput{
     // Kasada payload configuration
+
+    // Strict refuses a payload built on a signal the API cannot identify yet,
+    // instead of returning one built on a guess. Optional, off by default.
+    Strict: false,
 })
+// POST res.Payload to /tl with the x-kpsdk-* values in res.Headers.
+// res.ClientHints are the Accept-CH headers: send only the ones the site asked for.
 if err != nil {
     // Handle error
 }
@@ -225,9 +270,10 @@ if err != nil {
 Solve **Kasada Proof-of-Work** challenges for x-kpsdk-cd tokens:
 
 ```go
-powPayload, err := session.GenerateKasadaPow(ctx, &hyper.KasadaPowInput{
+res, err := session.GenerateKasadaPow(ctx, &hyper.KasadaPowInput{
     // POW challenge parameters
 })
+// res.Payload is the x-kpsdk-cd value
 if err != nil {
     // Handle error
 }
@@ -267,13 +313,13 @@ Solve **DataDome captchas** including slider challenges and interstitial pages.
 Bypass **DataDome interstitial pages**:
 
 ```go
-payload, headers, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
+res, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
     // Interstitial parameters
 })
 if err != nil {
     // Handle error
 }
-// POST payload to https://geo.captcha-delivery.com/interstitial/
+// POST res.Payload to https://geo.captcha-delivery.com/interstitial/
 ```
 
 ### Slider Captcha Solving
@@ -281,13 +327,13 @@ if err != nil {
 Solve **DataDome slider captchas** automatically:
 
 ```go
-checkUrl, headers, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
+res, err := session.GenerateDataDomeSlider(ctx, &hyper.DataDomeSliderInput{
     // Slider challenge parameters
 })
 if err != nil {
     // Handle error
 }
-// GET request to checkUrl
+// GET request to res.Payload (the check URL)
 ```
 
 ### DeviceLink URL Parsing
@@ -320,7 +366,7 @@ if scriptURL, ok := datadome.ParseChallengeScriptURL(html); ok {
     script = scriptBody
 }
 
-payload, headers, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
+res, err := session.GenerateDataDomeInterstitial(ctx, &hyper.DataDomeInterstitialInput{
     // ... other parameters
     Html:   html,
     Script: script, // empty when the page inlines the bundle
