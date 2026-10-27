@@ -77,6 +77,13 @@ type KasadaPayloadResult struct {
 	ClientHints ClientHints
 }
 
+// KasadaVersionResult is returned by [Session.GetKasadaVersion].
+type KasadaVersionResult struct {
+	// Version is the x-kpsdk-v value, such as "j-1.2.797". Send it verbatim
+	// on the /fp request and in the x-kpsdk-v header.
+	Version string
+}
+
 // KasadaPowResult is returned by [Session.GenerateKasadaPow].
 type KasadaPowResult struct {
 	// Payload is the x-kpsdk-cd value.

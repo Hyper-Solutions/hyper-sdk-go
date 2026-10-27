@@ -179,6 +179,15 @@ type KasadaPowInput struct {
 	WorkTime *int `json:"workTime,omitempty"`
 }
 
+// KasadaVersionInput is the [Session.GetKasadaVersion] request.
+type KasadaVersionInput struct {
+	// PageUrl is the URL of the page that loaded p.js.
+	PageUrl string `json:"pageUrl"`
+
+	// Script is the p.js script.
+	Script string `json:"script"`
+}
+
 type BotIDHeaderInput struct {
 	Script         string `json:"script"`
 	UserAgent      string `json:"userAgent"`

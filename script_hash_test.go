@@ -221,3 +221,33 @@ func TestContextRequestsCarryNoScript(t *testing.T) {
 		t.Fatalf("sent %v, want one request with neither script nor hash", got)
 	}
 }
+
+// TestGetKasadaVersion checks the /version request body and that the payload
+// comes back as the version.
+func TestGetKasadaVersion(t *testing.T) {
+	var got map[string]string
+	s := NewSession("key").WithClient(&http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		if req.URL.String() != "https://kasada.hypersolutions.co/version" {
+			t.Errorf("url = %s", req.URL)
+		}
+		body, _ := io.ReadAll(req.Body)
+		_ = json.Unmarshal(body, &got)
+		rec := httptest.NewRecorder()
+		_, _ = rec.Write([]byte(`{"payload":"j-1.2.797"}`))
+		return rec.Result(), nil
+	})})
+	res, err := s.GetKasadaVersion(context.Background(), &KasadaVersionInput{PageUrl: "https://example.com/", Script: "p.js"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Version != "j-1.2.797" {
+		t.Fatalf("Version = %q", res.Version)
+	}
+	if got["pageUrl"] != "https://example.com/" || got["script"] != "p.js" || len(got) != 2 {
+		t.Fatalf("body = %v", got)
+	}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
