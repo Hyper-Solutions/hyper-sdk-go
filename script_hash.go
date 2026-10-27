@@ -21,11 +21,11 @@ func ScriptHash(script string) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// sendScriptRequest sends a request that carries a challenge script. Once the
-// API has accepted a script from this session, the script is replaced by its
-// hash (withHash builds that request). If the API no longer knows the hash it
-// answers 422 script_required, and the request is sent once more with the
-// script.
+// sendScriptRequest sends a request that carries a challenge script with the
+// script replaced by its hash (withHash builds that request). The API answers
+// 422 script_required only for a script it has never seen, and the request is
+// then sent once more with the script, which the API stores for every later
+// request.
 func sendScriptRequest[V easyjson.Marshaler](ctx context.Context, s *Session, url string, input V, script, scriptHash string, withHash func(hash string) V) (*apiResponse, error) {
 	if script == "" {
 		response, status, err := sendRequestStatus[V, *apiResponse](ctx, s, url, input)
@@ -35,20 +35,11 @@ func sendScriptRequest[V easyjson.Marshaler](ctx context.Context, s *Session, ur
 		return response, err
 	}
 
-	hash := ScriptHash(script)
-	if _, known := s.knownScripts.Load(hash); known {
-		response, status, err := sendRequestStatus[V, *apiResponse](ctx, s, url, withHash(hash))
-		if err != nil || !isScriptRequired(status, response) {
-			return response, err
-		}
-		s.knownScripts.Delete(hash)
+	response, status, err := sendRequestStatus[V, *apiResponse](ctx, s, url, withHash(ScriptHash(script)))
+	if err != nil || !isScriptRequired(status, response) {
+		return response, err
 	}
-
-	response, err := sendRequest[V, *apiResponse](ctx, s, url, input)
-	if err == nil && response.Error == "" {
-		s.knownScripts.Store(hash, struct{}{})
-	}
-	return response, err
+	return sendRequest[V, *apiResponse](ctx, s, url, input)
 }
 
 func isScriptRequired(status int, response *apiResponse) bool {

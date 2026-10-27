@@ -3,7 +3,6 @@ package hyper
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -22,10 +21,6 @@ type Session struct {
 	AppSecret   []byte
 	Client      *http.Client
 	Compression CompressionType
-
-	// knownScripts holds the hashes of the challenge scripts the API has
-	// accepted from this session, which are sent as scriptHash from then on.
-	knownScripts sync.Map
 }
 
 // Default optimized HTTP client for concurrent requests

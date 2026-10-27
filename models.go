@@ -224,8 +224,8 @@ type DataDomeSliderInput struct {
 	// Html to find its URL, then GET that URL with the same client and pass the
 	// response body here.
 	//
-	// Always set it. Once the API has accepted a bundle, the session sends its
-	// ScriptHash instead, and resends the bundle if the API asks for it.
+	// Always set it. The session sends only its ScriptHash, and sends the
+	// bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The
@@ -253,8 +253,8 @@ type DataDomeInterstitialInput struct {
 	// Html to find its URL, then GET that URL with the same client and pass the
 	// response body here.
 	//
-	// Always set it. Once the API has accepted a bundle, the session sends its
-	// ScriptHash instead, and resends the bundle if the API asks for it.
+	// Always set it. The session sends only its ScriptHash, and sends the
+	// bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
 
 	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The

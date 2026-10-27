@@ -97,7 +97,7 @@ func TestScriptHashIsSha256Hex(t *testing.T) {
 	}
 }
 
-func TestDataDomeSendsScriptHashOnceAccepted(t *testing.T) {
+func TestDataDomeSendsScriptHashFirst(t *testing.T) {
 	ctx := context.Background()
 	const bundle = "/* DataDome v1.36.0 */ !function(){}();"
 
@@ -119,10 +119,10 @@ func TestDataDomeSendsScriptHashOnceAccepted(t *testing.T) {
 				do   func()
 				want []string
 			}{
-				{"first call sends the script", nil, []string{"script"}},
-				{"later calls send only the hash", nil, []string{"hash"}},
-				{"an evicted hash is resent with the script", func() { delete(api.known, ScriptHash(bundle)) }, []string{"hash", "script"}},
-				{"and is a hash again after that", nil, []string{"hash"}},
+				{"an unseen script is sent after the 422", nil, []string{"hash", "script"}},
+				{"then only the hash is sent", nil, []string{"hash"}},
+				{"a script another session sent is never uploaded", func() { s = NewSession("key").WithClient(&http.Client{Transport: api}) }, []string{"hash"}},
+				{"an evicted script is sent again", func() { delete(api.known, ScriptHash(bundle)) }, []string{"hash", "script"}},
 			}
 			for _, step := range steps {
 				if step.do != nil {
@@ -139,7 +139,9 @@ func TestDataDomeSendsScriptHashOnceAccepted(t *testing.T) {
 	}
 }
 
-func TestDataDomeErrorDoesNotRememberTheScript(t *testing.T) {
+// TestDataDomeErrorAfterTheScript checks that an error answer to the request
+// that carried the script is returned, and the input is left unchanged.
+func TestDataDomeErrorAfterTheScript(t *testing.T) {
 	ctx := context.Background()
 	s, api := newFakeScriptSession()
 	api.failWith = "failed to generate interstitial payload"
@@ -152,8 +154,8 @@ func TestDataDomeErrorDoesNotRememberTheScript(t *testing.T) {
 	if _, err := s.GenerateDataDomeInterstitial(ctx, input); err != nil {
 		t.Fatal(err)
 	}
-	if got := api.sent(); !equal(got, []string{"script", "script"}) {
-		t.Fatalf("sent %v, want the script both times", got)
+	if got := api.sent(); !equal(got, []string{"hash", "script", "hash", "script"}) {
+		t.Fatalf("sent %v, want hash then script both times", got)
 	}
 	if input.ScriptHash != "" {
 		t.Fatalf("the caller's input was modified: ScriptHash = %q", input.ScriptHash)
