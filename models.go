@@ -224,14 +224,9 @@ type DataDomeSliderInput struct {
 	// Html to find its URL, then GET that URL with the same client and pass the
 	// response body here.
 	//
-	// Always set it. The session sends only its ScriptHash, and sends the
-	// bundle itself when the API answers that it has not seen it yet.
+	// It is required. The session sends only the bundle's sha256, and sends
+	// the bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
-
-	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The
-	// session fills it in; set it yourself only to send a hash without the
-	// bundle, in which case an unknown hash returns ErrScriptRequired.
-	ScriptHash string `json:"scriptHash,omitempty"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`
@@ -253,14 +248,9 @@ type DataDomeInterstitialInput struct {
 	// Html to find its URL, then GET that URL with the same client and pass the
 	// response body here.
 	//
-	// Always set it. The session sends only its ScriptHash, and sends the
-	// bundle itself when the API answers that it has not seen it yet.
+	// It is required. The session sends only the bundle's sha256, and sends
+	// the bundle itself when the API answers that it has not seen it yet.
 	Script string `json:"script"`
-
-	// ScriptHash is the lowercase hex sha256 of Script (see ScriptHash). The
-	// session fills it in; set it yourself only to send a hash without the
-	// bundle, in which case an unknown hash returns ErrScriptRequired.
-	ScriptHash string `json:"scriptHash,omitempty"`
 
 	AcceptLanguage string `json:"acceptLanguage"`
 	IP             string `json:"ip"`

@@ -3,12 +3,13 @@ package hyper
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync"
 	"testing"
+
+	"github.com/mailru/easyjson"
 )
 
 // fakeScriptAPI answers like the API: it stores the scripts it is sent, solves
@@ -40,7 +41,7 @@ func (f *fakeScriptAPI) serve(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(`{"error":"` + f.failWith + `"}`))
 	case in["script"] != "":
-		f.known[ScriptHash(in["script"])] = true
+		f.known[scriptHash(in["script"])] = true
 		_, _ = w.Write([]byte(`{"payload":"solved"}`))
 	case f.known[in["scriptHash"]]:
 		_, _ = w.Write([]byte(`{"payload":"solved"}`))
@@ -92,8 +93,8 @@ func equal(a, b []string) bool {
 func TestScriptHashIsSha256Hex(t *testing.T) {
 	// echo -n "abc" | sha256sum
 	const want = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-	if got := ScriptHash("abc"); got != want {
-		t.Fatalf("ScriptHash(abc) = %s, want %s", got, want)
+	if got := scriptHash("abc"); got != want {
+		t.Fatalf("scriptHash(abc) = %s, want %s", got, want)
 	}
 }
 
@@ -122,7 +123,7 @@ func TestDataDomeSendsScriptHashFirst(t *testing.T) {
 				{"an unseen script is sent after the 422", nil, []string{"hash", "script"}},
 				{"then only the hash is sent", nil, []string{"hash"}},
 				{"a script another session sent is never uploaded", func() { s = NewSession("key").WithClient(&http.Client{Transport: api}) }, []string{"hash"}},
-				{"an evicted script is sent again", func() { delete(api.known, ScriptHash(bundle)) }, []string{"hash", "script"}},
+				{"an evicted script is sent again", func() { delete(api.known, scriptHash(bundle)) }, []string{"hash", "script"}},
 			}
 			for _, step := range steps {
 				if step.do != nil {
@@ -157,19 +158,30 @@ func TestDataDomeErrorAfterTheScript(t *testing.T) {
 	if got := api.sent(); !equal(got, []string{"hash", "script", "hash", "script"}) {
 		t.Fatalf("sent %v, want hash then script both times", got)
 	}
-	if input.ScriptHash != "" {
-		t.Fatalf("the caller's input was modified: ScriptHash = %q", input.ScriptHash)
+	if input.Script != "bundle" {
+		t.Fatalf("the caller's input was modified: Script = %q", input.Script)
 	}
 }
 
-func TestDataDomeHashWithoutScript(t *testing.T) {
-	ctx := context.Background()
-	s, api := newFakeScriptSession()
-	_, err := s.GenerateDataDomeSlider(ctx, &DataDomeSliderInput{Html: "<html/>", ScriptHash: ScriptHash("never sent")})
-	if !errors.Is(err, ErrScriptRequired) {
-		t.Fatalf("error = %v, want ErrScriptRequired", err)
+// TestWithScriptHashWire checks the hashed request body: every field of the
+// input, an empty script and the hash, as valid JSON.
+func TestWithScriptHashWire(t *testing.T) {
+	input := &DataDomeSliderInput{UserAgent: "UA", Html: `<script src="x"></script>`, Puzzle: "p", ParentUrl: "https://example.com/"}
+	raw, err := easyjson.Marshal(withScriptHash[*DataDomeSliderInput]{input: input, hash: scriptHash("bundle")})
+	if err != nil {
+		t.Fatal(err)
 	}
-	if got := api.sent(); !equal(got, []string{"hash"}) {
-		t.Fatalf("sent %v, want one hash-only request", got)
+	var got map[string]string
+	if err := json.Unmarshal(raw, &got); err != nil {
+		t.Fatalf("invalid JSON %s: %v", raw, err)
+	}
+	want := map[string]string{
+		"userAgent": "UA", "html": input.Html, "puzzle": "p", "parentUrl": input.ParentUrl,
+		"script": "", "scriptHash": scriptHash("bundle"),
+	}
+	for k, v := range want {
+		if got[k] != v {
+			t.Errorf("%s = %q, want %q (body %s)", k, got[k], v, raw)
+		}
 	}
 }
