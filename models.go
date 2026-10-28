@@ -166,6 +166,12 @@ type KasadaPayloadInput struct {
 	// fails with "Unidentified signals in script; refusing payload because
 	// strict was set". Off by default: such a payload usually still works.
 	Strict bool `json:"strict,omitempty"`
+
+	// Dv is the x-kpsdk-dv header the iOS app flow sends, exactly as sent
+	// (see kasada.GenerateDV). Optional, iOS app user agents only: the payload
+	// is then generated on a device with the screen of the model it names and
+	// the iOS release it names, so the two agree.
+	Dv string `json:"dv,omitempty"`
 }
 
 type KasadaPowInput struct {

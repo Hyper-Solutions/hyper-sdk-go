@@ -1266,6 +1266,8 @@ func easyjsonD2b7633eDecodeGithubComHyperSolutionsHyperSdkGoV411(in *jlexer.Lexe
 			out.IP = string(in.String())
 		case "strict":
 			out.Strict = bool(in.Bool())
+		case "dv":
+			out.Dv = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1309,6 +1311,11 @@ func easyjsonD2b7633eEncodeGithubComHyperSolutionsHyperSdkGoV411(out *jwriter.Wr
 		const prefix string = ",\"strict\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.Strict))
+	}
+	if in.Dv != "" {
+		const prefix string = ",\"dv\":"
+		out.RawString(prefix)
+		out.String(string(in.Dv))
 	}
 	out.RawByte('}')
 }
