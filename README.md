@@ -113,6 +113,23 @@ session := hyper.NewSession("your-api-key").
     WithClient(customHTTPClient)
 ```
 
+### Checking Usage
+
+`GetUsage` returns the key's pay-as-you-go balance and the remaining requests of each plan. It is not counted as usage.
+
+```go
+usage, err := session.GetUsage(ctx)
+if err != nil {
+    // Handle error
+}
+
+fmt.Printf("balance: €%.2f\n", usage.BalanceEuro)
+for _, plan := range usage.Plans {
+    fmt.Printf("%s: %d of %d left, expires %s\n",
+        plan.Product, plan.RequestsRemaining, plan.RequestsQuota, plan.ExpiresAt.Format(time.DateOnly))
+}
+```
+
 ## 🛡️ Akamai Bot Manager
 
 Bypass **Akamai Bot Manager** protection with sensor data generation, cookie validation, and challenge solving.
