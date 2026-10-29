@@ -1,5 +1,7 @@
 package hyper
 
+import "time"
+
 // Each Generate* method returns one of these. Fields the API adds later become
 // new fields here instead of new return values, so they never break callers.
 
@@ -82,6 +84,28 @@ type KasadaVersionResult struct {
 	// Version is the x-kpsdk-v value, such as "j-1.2.797". Send it verbatim
 	// on the /fp request and in the x-kpsdk-v header.
 	Version string
+}
+
+// UsageResult is returned by [Session.GetUsage].
+type UsageResult struct {
+	// BalanceEuro is the pay-as-you-go balance in euros.
+	BalanceEuro float64 `json:"balanceEuro"`
+	// Plans are the plans of the API key, one per product.
+	Plans []UsagePlan `json:"plans"`
+}
+
+// UsagePlan is the quota of one plan in a [UsageResult].
+type UsagePlan struct {
+	// Product is the product the plan covers, such as "akamai" or "datadome".
+	Product string `json:"product"`
+	// RequestsUsed is the number of requests used from the plan.
+	RequestsUsed int64 `json:"requestsUsed"`
+	// RequestsQuota is the number of requests the plan allows.
+	RequestsQuota int64 `json:"requestsQuota"`
+	// RequestsRemaining is RequestsQuota minus RequestsUsed.
+	RequestsRemaining int64 `json:"requestsRemaining"`
+	// ExpiresAt is when the plan expires.
+	ExpiresAt time.Time `json:"expiresAt"`
 }
 
 // KasadaPowResult is returned by [Session.GenerateKasadaPow].

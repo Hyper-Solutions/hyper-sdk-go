@@ -56,29 +56,14 @@ func sendRequestStatus[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context
 	}
 
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept-encoding", string(s.Compression))
-	req.Header.Set("x-api-key", s.ApiKey)
 
 	// Set request compression header if used
 	if useCompression {
 		req.Header.Set("content-encoding", string(s.Compression))
 	}
 
-	if s.JwtKey != nil {
-		signature, err := generateSignature(s.ApiKey, s.JwtKey)
-		if err != nil {
-			return response, 0, err
-		}
-		req.Header.Set("x-signature", signature)
-	}
-
-	if s.AppSecret != nil {
-		signature, err := generateSignature(s.AppKey, s.AppSecret)
-		if err != nil {
-			return response, 0, err
-		}
-		req.Header.Set("x-app-signature", signature)
-		req.Header.Set("x-app-key", s.AppKey)
+	if err := s.setAuthHeaders(req); err != nil {
+		return response, 0, err
 	}
 
 	resp, err := s.Client.Do(req)
@@ -98,6 +83,32 @@ func sendRequestStatus[V easyjson.Marshaler, T easyjson.Unmarshaler](ctx context
 	}
 
 	return response, resp.StatusCode, nil
+}
+
+// setAuthHeaders sets the api key, the accepted response encoding and, when the
+// session has them, the JWT and organization signatures.
+func (s *Session) setAuthHeaders(req *http.Request) error {
+	req.Header.Set("accept-encoding", string(s.Compression))
+	req.Header.Set("x-api-key", s.ApiKey)
+
+	if s.JwtKey != nil {
+		signature, err := generateSignature(s.ApiKey, s.JwtKey)
+		if err != nil {
+			return err
+		}
+		req.Header.Set("x-signature", signature)
+	}
+
+	if s.AppSecret != nil {
+		signature, err := generateSignature(s.AppKey, s.AppSecret)
+		if err != nil {
+			return err
+		}
+		req.Header.Set("x-app-signature", signature)
+		req.Header.Set("x-app-key", s.AppKey)
+	}
+
+	return nil
 }
 
 // compressPayload compresses the payload using the specified compression algorithm
