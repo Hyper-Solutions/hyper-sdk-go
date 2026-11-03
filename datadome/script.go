@@ -5,8 +5,10 @@ import "regexp"
 // challengeScriptRegex matches the tag a challenge page uses to load the
 // bundle from ct.captcha-delivery.com, capturing the URL. The name in front of
 // the version is left open so it keeps matching whatever DataDome calls the
-// bundle, e.g. interstitial.1.33.0.202609141.js or captcha.1.34.0.202609141.js.
-var challengeScriptRegex = regexp.MustCompile(`<script[^>]+src\s*=\s*["']([^"']*/[a-z_-]+\.\d+\.\d+\.\d+\.[^"']*\.js)["']`)
+// bundle, and the build segment after the version is optional: the bundle can
+// be interstitial.1.33.0.202609141.js, captcha.1.34.0.202609141.js or
+// interstitial.1.36.0.js.
+var challengeScriptRegex = regexp.MustCompile(`<script[^>]+src\s*=\s*["']([^"']*/[a-z_-]+\.\d+\.\d+\.\d+(?:\.[^"']*)?\.js)["']`)
 
 // ParseChallengeScriptURL reports the challenge bundle a device check or
 // captcha page loads with a <script defer src="..."> tag, and whether the page
