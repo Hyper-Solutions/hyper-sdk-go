@@ -19,6 +19,21 @@ func TestParseChallengeScriptURL(t *testing.T) {
 			want: "https://ct.captcha-delivery.com/captcha.1.34.0.202609141.js",
 		},
 		{
+			name: "interstitial deferred without build",
+			html: `<head><script defer src="https://ct.captcha-delivery.com/interstitial.1.36.0.js"></script></head>`,
+			want: "https://ct.captcha-delivery.com/interstitial.1.36.0.js",
+		},
+		{
+			name: "captcha deferred without build",
+			html: `<script defer src="https://ct.captcha-delivery.com/captcha.1.37.0.js"></script>`,
+			want: "https://ct.captcha-delivery.com/captcha.1.37.0.js",
+		},
+		{
+			name: "loader script without version",
+			html: `<script src="https://ct.captcha-delivery.com/i.js"></script>`,
+			want: "",
+		},
+		{
 			name: "single quotes",
 			html: `<script src='https://ct.captcha-delivery.com/captcha.1.34.0.202609141.js'></script>`,
 			want: "https://ct.captcha-delivery.com/captcha.1.34.0.202609141.js",
