@@ -2,13 +2,16 @@ package datadome
 
 import "regexp"
 
-// challengeScriptRegex matches the tag a challenge page uses to load the
-// bundle from ct.captcha-delivery.com, capturing the URL. The name in front of
-// the version is left open so it keeps matching whatever DataDome calls the
-// bundle, and the build segment after the version is optional: the bundle can
-// be interstitial.1.33.0.202609141.js, captcha.1.34.0.202609141.js or
-// interstitial.1.36.0.js.
-var challengeScriptRegex = regexp.MustCompile(`<script[^>]+src\s*=\s*["']([^"']*/[a-z_-]+\.\d+\.\d+\.\d+(?:\.[^"']*)?\.js)["']`)
+// A challenge page loads its bundle with the only deferred <script> tag on the
+// page, so the bundle is the src of the first tag carrying a defer attribute.
+// The file name is not checked: DataDome renames the bundle freely, e.g.
+// interstitial.1.36.0.js or captcha.build623.01-c-v1.38.0-2026-11-17-05h07.js.
+// The c.js and i.js loaders are not deferred and never match.
+var (
+	scriptTagRegex = regexp.MustCompile(`(?i)<script\b([^>]*)>`)
+	deferAttrRegex = regexp.MustCompile(`(?i)(?:^|\s)defer(?:\s|=|/|$)`)
+	srcAttrRegex   = regexp.MustCompile(`(?i)(?:^|\s)src\s*=\s*["']([^"']+)["']`)
+)
 
 // ParseChallengeScriptURL reports the challenge bundle a device check or
 // captcha page loads with a <script defer src="..."> tag, and whether the page
@@ -40,10 +43,15 @@ var challengeScriptRegex = regexp.MustCompile(`<script[^>]+src\s*=\s*["']([^"']*
 //	    IP:             ip,
 //	})
 func ParseChallengeScriptURL(html string) (string, bool) {
-	matches := challengeScriptRegex.FindStringSubmatch(html)
-	if len(matches) != 2 {
-		return "", false
+	for _, tag := range scriptTagRegex.FindAllStringSubmatch(html, -1) {
+		attrs := tag[1]
+		if !deferAttrRegex.MatchString(attrs) {
+			continue
+		}
+		if src := srcAttrRegex.FindStringSubmatch(attrs); src != nil {
+			return src[1], true
+		}
 	}
 
-	return matches[1], true
+	return "", false
 }
